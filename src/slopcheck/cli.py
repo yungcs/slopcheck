@@ -170,18 +170,7 @@ def main(
     ctx: typer.Context,
     version: bool = typer.Option(False, "--version", help="Show the version and exit."),
 ) -> None:
-    """A linter for the mess AI coding agents leave in Python.
-
-    Examples:
-
-      slopcheck .
-
-      slopcheck src --format sarif -o slopcheck.sarif
-
-      slopcheck prompt . > fix.md
-
-      slopcheck --fix-with-agent src/app.py
-    """
+    """A linter for the mess AI coding agents leave in Python."""
     if version:
         typer.echo(__version__)
         raise typer.Exit()

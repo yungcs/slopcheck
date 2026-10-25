@@ -1,0 +1,65 @@
+$ slopcheck demo
+slopcheck  0.1.0
+scanned 5 files · 191 lines · 20 findings
+score   29 / 100  ███░░░░░░░  sloppy
+
+demo/taskflow/client.py
+  11:5  SLP001  error    bare except swallows errors, including KeyboardInterrupt and SystemExit
+            except:
+                pass
+  18:5  SLP002  error    broad except swallows the error
+            except Exception:
+                return None
+  26:9  SLP003  error    except handler returns dummy value {}
+                return {}
+  33:9  SLP015  warning  except handler returns an error payload instead of raising
+                return "Error: failed to fetch title"
+  37:5  SLP005  warning  leftover debug print
+            print("DEBUG reached task fetch")
+  38:5  SLP005  warning  leftover debug f-string
+            print(f"{tasks=}")
+  39:5  SLP005  warning  leftover breakpoint or set_trace()
+            breakpoint()
+  46:13  SLP011  warning  try/except nested to depth 3 (limit 2)
+                    try:
+                        return url.strip()
+
+demo/taskflow/imports_hallucinated.py
+  3:8  SLP010  error    import `requets` does not resolve
+        import requets
+  4:1  SLP010  error    import `jason` does not resolve
+        from jason import loads
+  5:25  SLP010  error    `defaultdictx` is not an attribute of `collections`
+        from collections import defaultdictx
+
+demo/taskflow/utils.py
+  7:5  SLP004  note     narrating comment restates the code
+            # increment index
+            index += 1
+  12:1  SLP004  note     narrating comment restates the code
+        # This function returns the count
+        def task_count(tasks):
+  13:1  SLP012  note     docstring is 11 lines on a 1-statement function
+        def task_count(tasks):
+            """Return the number of tasks.
+  28:1  SLP006  warning  private function `_format_legacy_banner` is never used
+        def _format_legacy_banner(text):
+            return "*** " + text + " ***"
+  34:5  SLP008  note     over-defensive check: `name` is a non-None literal here
+            if name is not None:
+                return name.upper()
+  39:1  SLP009  warning  function body is only pass
+        def export_tasks(tasks, path):
+            """Write tasks somewhere eventually."""
+  45:5  SLP014  note     commented-out code (2 lines)
+            # status = "archived"
+            # owner = "ada"
+  70:1  SLP007  warning  duplicate of `summarize_tasks` (100% similar)
+        def summarize_tasks_v2(tasks, limit):
+            rows = []
+  70:1  SLP013  warning  `summarize_tasks_v2` looks like a leftover versioned name
+        def summarize_tasks_v2(tasks, limit):
+            rows = []
+
+SLP001 1  SLP002 1  SLP003 1  SLP004 2  SLP005 3  SLP006 1  SLP007 1  SLP008 1  SLP009 1  SLP010 3  SLP011 1  SLP012 1  SLP013 1  SLP014 1  SLP015 1
+20 findings · score 29 · fail

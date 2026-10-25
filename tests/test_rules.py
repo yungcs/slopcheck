@@ -20,6 +20,7 @@ def test_fixture_flags_its_rule(path: Path):
 
 def test_clean_fixture_is_clean():
     report = scan([ROOT / "tests" / "fixtures" / "clean" / "ok.py"])
+    assert report.files_scanned == 1
     assert report.findings == []
 
 

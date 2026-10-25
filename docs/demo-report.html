@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>slopcheck 29/100</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #10140f;
+  --card: #181e16;
+  --line: #2c3824;
+  --text: #e7ecdf;
+  --dim: #9aa892;
+  --accent: #ff7a32;
+  --error: #ff5c39;
+  --warning: #ffb020;
+  --note: #79d2ff;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+main { max-width: 980px; margin: 0 auto; padding: 28px 18px 64px; }
+header.top {
+  display: flex;
+  gap: 28px;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 18px;
+}
+.word { font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
+.score { font-size: 72px; line-height: 0.9; color: var(--accent); font-weight: 700; }
+.score span { font-size: 18px; color: var(--dim); font-weight: 500; }
+.meta { color: var(--dim); text-align: right; }
+.bar { color: var(--accent); letter-spacing: 1px; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0; }
+button, input {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font: inherit;
+}
+button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+input { border-radius: 8px; min-width: 180px; }
+h2 { font-size: 14px; margin: 22px 0 8px; }
+article {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 0 0 10px;
+}
+article header { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: baseline; }
+.loc { color: var(--dim); }
+.rule { font-weight: 700; }
+.sev { text-transform: uppercase; font-size: 12px; letter-spacing: 0.06em; }
+.sev.error { color: var(--error); }
+.sev.warning { color: var(--warning); }
+.sev.note { color: var(--note); }
+article p { margin: 8px 0 0; }
+pre {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  overflow: auto;
+  background: #0c100c;
+  border-radius: 8px;
+  color: #d5dcc8;
+}
+.hint { color: var(--dim); }
+.parse { color: var(--error); }
+.clean { color: var(--accent); }
+footer { margin-top: 28px; color: var(--dim); }
+@media (max-width: 640px) {
+  header.top { flex-direction: column; align-items: flex-start; }
+  .meta { text-align: left; }
+  .score { font-size: 56px; }
+}
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <div>
+      <div class="word">slopcheck 0.1.0</div>
+      <div class="score">29<span> / 100</span></div>
+      <div class="bar">█████░░░░░░░░░░░ sloppy</div>
+    </div>
+    <div class="meta">
+      <div>5 files</div>
+      <div>191 lines</div>
+      <div>20 findings</div>
+      <div>6 errors · 9 warnings · 5 notes</div>
+    </div>
+  </header>
+  <div class="filters">
+    <button type="button" data-filter="all" aria-pressed="true">all</button>
+    <button type="button" data-filter="error">errors</button>
+    <button type="button" data-filter="warning">warnings</button>
+    <button type="button" data-filter="note">notes</button>
+    <button type="button" data-filter="SLP001">SLP001 1</button><button type="button" data-filter="SLP002">SLP002 1</button><button type="button" data-filter="SLP003">SLP003 1</button><button type="button" data-filter="SLP004">SLP004 2</button><button type="button" data-filter="SLP005">SLP005 3</button><button type="button" data-filter="SLP006">SLP006 1</button><button type="button" data-filter="SLP007">SLP007 1</button><button type="button" data-filter="SLP008">SLP008 1</button><button type="button" data-filter="SLP009">SLP009 1</button><button type="button" data-filter="SLP010">SLP010 3</button><button type="button" data-filter="SLP011">SLP011 1</button><button type="button" data-filter="SLP012">SLP012 1</button><button type="button" data-filter="SLP013">SLP013 1</button><button type="button" data-filter="SLP014">SLP014 1</button><button type="button" data-filter="SLP015">SLP015 1</button>
+    <input id="q" type="search" placeholder="filter text" aria-label="filter findings">
+  </div>
+  
+  <section id="findings">
+    <h2>demo/taskflow/client.py</h2>
+<article data-severity="error" data-rule="SLP001"><header><span class="loc">11:5</span><span class="rule">SLP001</span><span class="sev error">error</span><p>bare except swallows errors, including KeyboardInterrupt and SystemExit</p></header><pre><code>    except:
+        pass</code></pre><p class="hint">Catch the specific exception you can handle, or let it propagate. A bare except also catches KeyboardInterrupt and SystemExit.</p></article>
+<article data-severity="error" data-rule="SLP002"><header><span class="loc">18:5</span><span class="rule">SLP002</span><span class="sev error">error</span><p>broad except swallows the error</p></header><pre><code>    except Exception:
+        return None</code></pre><p class="hint">Handle the specific error, or re-raise. Returning None here hides a real failure.</p></article>
+<article data-severity="error" data-rule="SLP003"><header><span class="loc">26:9</span><span class="rule">SLP003</span><span class="sev error">error</span><p>except handler returns dummy value {}</p></header><pre><code>        return {}</code></pre><p class="hint">Return a real result or raise. An empty dict, list, or string from except is made-up data.</p></article>
+<article data-severity="warning" data-rule="SLP015"><header><span class="loc">33:9</span><span class="rule">SLP015</span><span class="sev warning">warning</span><p>except handler returns an error payload instead of raising</p></header><pre><code>        return &quot;Error: failed to fetch title&quot;</code></pre><p class="hint">Raise, or return a value the caller expects on purpose. An error string drops the traceback.</p></article>
+<article data-severity="warning" data-rule="SLP005"><header><span class="loc">37:5</span><span class="rule">SLP005</span><span class="sev warning">warning</span><p>leftover debug print</p></header><pre><code>    print(&quot;DEBUG reached task fetch&quot;)</code></pre><p class="hint">Remove the debug call. A normal print of a finished message is left alone.</p></article>
+<article data-severity="warning" data-rule="SLP005"><header><span class="loc">38:5</span><span class="rule">SLP005</span><span class="sev warning">warning</span><p>leftover debug f-string</p></header><pre><code>    print(f&quot;{tasks=}&quot;)</code></pre><p class="hint">Remove the debug call. A normal print of a finished message is left alone.</p></article>
+<article data-severity="warning" data-rule="SLP005"><header><span class="loc">39:5</span><span class="rule">SLP005</span><span class="sev warning">warning</span><p>leftover breakpoint or set_trace()</p></header><pre><code>    breakpoint()</code></pre><p class="hint">Remove the debug call. A normal print of a finished message is left alone.</p></article>
+<article data-severity="warning" data-rule="SLP011"><header><span class="loc">46:13</span><span class="rule">SLP011</span><span class="sev warning">warning</span><p>try/except nested to depth 3 (limit 2)</p></header><pre><code>            try:
+                return url.strip()
+            except ConnectionError as exc:</code></pre><p class="hint">Flatten the handlers or split the function. Deeply nested try blocks hide which error is which.</p></article>
+<h2>demo/taskflow/imports_hallucinated.py</h2>
+<article data-severity="error" data-rule="SLP010"><header><span class="loc">3:8</span><span class="rule">SLP010</span><span class="sev error">error</span><p>import `requets` does not resolve</p></header><pre><code>import requets</code></pre><p class="hint">Point the import at a real module. Optional imports belong in `try/except ImportError`. Allow known extras under rules.SLP010.allowed_modules.</p></article>
+<article data-severity="error" data-rule="SLP010"><header><span class="loc">4:1</span><span class="rule">SLP010</span><span class="sev error">error</span><p>import `jason` does not resolve</p></header><pre><code>from jason import loads</code></pre><p class="hint">Point the import at a real module. Optional imports belong in `try/except ImportError`. Allow known extras under rules.SLP010.allowed_modules.</p></article>
+<article data-severity="error" data-rule="SLP010"><header><span class="loc">5:25</span><span class="rule">SLP010</span><span class="sev error">error</span><p>`defaultdictx` is not an attribute of `collections`</p></header><pre><code>from collections import defaultdictx</code></pre><p class="hint">Point the import at a real module. Optional imports belong in `try/except ImportError`. Allow known extras under rules.SLP010.allowed_modules.</p></article>
+<h2>demo/taskflow/utils.py</h2>
+<article data-severity="note" data-rule="SLP004"><header><span class="loc">7:5</span><span class="rule">SLP004</span><span class="sev note">note</span><p>narrating comment restates the code</p></header><pre><code>    # increment index
+    index += 1</code></pre><p class="hint">Delete the comment. Keep a comment only when it says something the code cannot.</p></article>
+<article data-severity="note" data-rule="SLP004"><header><span class="loc">12:1</span><span class="rule">SLP004</span><span class="sev note">note</span><p>narrating comment restates the code</p></header><pre><code># This function returns the count
+def task_count(tasks):</code></pre><p class="hint">Delete the comment. Keep a comment only when it says something the code cannot.</p></article>
+<article data-severity="note" data-rule="SLP012"><header><span class="loc">13:1</span><span class="rule">SLP012</span><span class="sev note">note</span><p>docstring is 11 lines on a 1-statement function</p></header><pre><code>def task_count(tasks):
+    &quot;&quot;&quot;Return the number of tasks.
+</code></pre><p class="hint">Cut the docstring to one line, or delete it. The body is already shorter than the preface.</p></article>
+<article data-severity="warning" data-rule="SLP006"><header><span class="loc">28:1</span><span class="rule">SLP006</span><span class="sev warning">warning</span><p>private function `_format_legacy_banner` is never used</p></header><pre><code>def _format_legacy_banner(text):
+    return &quot;*** &quot; + text + &quot; ***&quot;</code></pre><p class="hint">Delete the helper, or call it. Methods are skipped; other modules may use them.</p></article>
+<article data-severity="note" data-rule="SLP008"><header><span class="loc">34:5</span><span class="rule">SLP008</span><span class="sev note">note</span><p>over-defensive check: `name` is a non-None literal here</p></header><pre><code>    if name is not None:
+        return name.upper()</code></pre><p class="hint">Delete the branch. Checks on parameters and on values returned from calls are kept.</p></article>
+<article data-severity="warning" data-rule="SLP009"><header><span class="loc">39:1</span><span class="rule">SLP009</span><span class="sev warning">warning</span><p>function body is only pass</p></header><pre><code>def export_tasks(tasks, path):
+    &quot;&quot;&quot;Write tasks somewhere eventually.&quot;&quot;&quot;
+    pass</code></pre><p class="hint">Implement the function or delete it. Abstract methods and `.pyi` stubs are ignored.</p></article>
+<article data-severity="note" data-rule="SLP014"><header><span class="loc">45:5</span><span class="rule">SLP014</span><span class="sev note">note</span><p>commented-out code (2 lines)</p></header><pre><code>    # status = &quot;archived&quot;
+    # owner = &quot;ada&quot;</code></pre><p class="hint">Delete it. Version control remembers the old line.</p></article>
+<article data-severity="warning" data-rule="SLP007"><header><span class="loc">70:1</span><span class="rule">SLP007</span><span class="sev warning">warning</span><p>duplicate of `summarize_tasks` (100% similar)</p></header><pre><code>def summarize_tasks_v2(tasks, limit):
+    rows = []
+    index = 0</code></pre><p class="hint">Keep one function and parameterize the difference. Delete the copy.</p></article>
+<article data-severity="warning" data-rule="SLP013"><header><span class="loc">70:1</span><span class="rule">SLP013</span><span class="sev warning">warning</span><p>`summarize_tasks_v2` looks like a leftover versioned name</p></header><pre><code>def summarize_tasks_v2(tasks, limit):
+    rows = []
+    index = 0</code></pre><p class="hint">Rename it to the real name and delete the previous copy. Suffixes like `_new` are flagged when the base name still exists.</p></article>
+  </section>
+  <footer>generated by slopcheck 0.1.0</footer>
+</main>
+<script id="report-data" type="application/json">{"tool": "slopcheck", "version": "0.1.0", "score": 29, "label": "sloppy", "files_scanned": 5, "lines_scanned": 191, "finding_count": 20, "raw": 94, "budget": 38.2, "weights": {"error": 8, "warning": 4, "note": 2}, "findings": [{"rule": "SLP001", "name": "bare-except", "severity": "error", "message": "bare except swallows errors, including KeyboardInterrupt and SystemExit", "path": "demo/taskflow/client.py", "line": 11, "column": 5, "end_line": 12, "end_column": 13, "hint": "Catch the specific exception you can handle, or let it propagate. A bare except also catches KeyboardInterrupt and SystemExit.", "snippet": "    except:\n        pass"}, {"rule": "SLP002", "name": "broad-except-swallow", "severity": "error", "message": "broad except swallows the error", "path": "demo/taskflow/client.py", "line": 18, "column": 5, "end_line": 19, "end_column": 20, "hint": "Handle the specific error, or re-raise. Returning None here hides a real failure.", "snippet": "    except Exception:\n        return None"}, {"rule": "SLP003", "name": "fake-fallback", "severity": "error", "message": "except handler returns dummy value {}", "path": "demo/taskflow/client.py", "line": 26, "column": 9, "end_line": 26, "end_column": 18, "hint": "Return a real result or raise. An empty dict, list, or string from except is made-up data.", "snippet": "        return {}"}, {"rule": "SLP015", "name": "error-string-return", "severity": "warning", "message": "except handler returns an error payload instead of raising", "path": "demo/taskflow/client.py", "line": 33, "column": 9, "end_line": 33, "end_column": 46, "hint": "Raise, or return a value the caller expects on purpose. An error string drops the traceback.", "snippet": "        return \"Error: failed to fetch title\""}, {"rule": "SLP005", "name": "debug-leftover", "severity": "warning", "message": "leftover debug print", "path": "demo/taskflow/client.py", "line": 37, "column": 5, "end_line": 37, "end_column": 38, "hint": "Remove the debug call. A normal print of a finished message is left alone.", "snippet": "    print(\"DEBUG reached task fetch\")"}, {"rule": "SLP005", "name": "debug-leftover", "severity": "warning", "message": "leftover debug f-string", "path": "demo/taskflow/client.py", "line": 38, "column": 5, "end_line": 38, "end_column": 23, "hint": "Remove the debug call. A normal print of a finished message is left alone.", "snippet": "    print(f\"{tasks=}\")"}, {"rule": "SLP005", "name": "debug-leftover", "severity": "warning", "message": "leftover breakpoint or set_trace()", "path": "demo/taskflow/client.py", "line": 39, "column": 5, "end_line": 39, "end_column": 17, "hint": "Remove the debug call. A normal print of a finished message is left alone.", "snippet": "    breakpoint()"}, {"rule": "SLP011", "name": "try-nesting", "severity": "warning", "message": "try/except nested to depth 3 (limit 2)", "path": "demo/taskflow/client.py", "line": 46, "column": 13, "end_line": 49, "end_column": 53, "hint": "Flatten the handlers or split the function. Deeply nested try blocks hide which error is which.", "snippet": "            try:\n                return url.strip()\n            except ConnectionError as exc:"}, {"rule": "SLP010", "name": "hallucinated-import", "severity": "error", "message": "import `requets` does not resolve", "path": "demo/taskflow/imports_hallucinated.py", "line": 3, "column": 8, "end_line": 3, "end_column": 15, "hint": "Point the import at a real module. Optional imports belong in `try/except ImportError`. Allow known extras under rules.SLP010.allowed_modules.", "snippet": "import requets"}, {"rule": "SLP010", "name": "hallucinated-import", "severity": "error", "message": "import `jason` does not resolve", "path": "demo/taskflow/imports_hallucinated.py", "line": 4, "column": 1, "end_line": 4, "end_column": 24, "hint": "Point the import at a real module. Optional imports belong in `try/except ImportError`. Allow known extras under rules.SLP010.allowed_modules.", "snippet": "from jason import loads"}, {"rule": "SLP010", "name": "hallucinated-import", "severity": "error", "message": "`defaultdictx` is not an attribute of `collections`", "path": "demo/taskflow/imports_hallucinated.py", "line": 5, "column": 25, "end_line": 5, "end_column": 37, "hint": "Point the import at a real module. Optional imports belong in `try/except ImportError`. Allow known extras under rules.SLP010.allowed_modules.", "snippet": "from collections import defaultdictx"}, {"rule": "SLP004", "name": "narrating-comment", "severity": "note", "message": "narrating comment restates the code", "path": "demo/taskflow/utils.py", "line": 7, "column": 5, "end_line": 8, "end_column": 21, "hint": "Delete the comment. Keep a comment only when it says something the code cannot.", "snippet": "    # increment index\n    index += 1"}, {"rule": "SLP004", "name": "narrating-comment", "severity": "note", "message": "narrating comment restates the code", "path": "demo/taskflow/utils.py", "line": 12, "column": 1, "end_line": 13, "end_column": 33, "hint": "Delete the comment. Keep a comment only when it says something the code cannot.", "snippet": "# This function returns the count\ndef task_count(tasks):"}, {"rule": "SLP012", "name": "verbose-docstring", "severity": "note", "message": "docstring is 11 lines on a 1-statement function", "path": "demo/taskflow/utils.py", "line": 13, "column": 1, "end_line": 25, "end_column": 22, "hint": "Cut the docstring to one line, or delete it. The body is already shorter than the preface.", "snippet": "def task_count(tasks):\n    \"\"\"Return the number of tasks.\n"}, {"rule": "SLP006", "name": "unused-private", "severity": "warning", "message": "private function `_format_legacy_banner` is never used", "path": "demo/taskflow/utils.py", "line": 28, "column": 1, "end_line": 29, "end_column": 34, "hint": "Delete the helper, or call it. Methods are skipped; other modules may use them.", "snippet": "def _format_legacy_banner(text):\n    return \"*** \" + text + \" ***\""}, {"rule": "SLP008", "name": "over-defensive", "severity": "note", "message": "over-defensive check: `name` is a non-None literal here", "path": "demo/taskflow/utils.py", "line": 34, "column": 5, "end_line": 35, "end_column": 28, "hint": "Delete the branch. Checks on parameters and on values returned from calls are kept.", "snippet": "    if name is not None:\n        return name.upper()"}, {"rule": "SLP009", "name": "placeholder-stub", "severity": "warning", "message": "function body is only pass", "path": "demo/taskflow/utils.py", "line": 39, "column": 1, "end_line": 41, "end_column": 9, "hint": "Implement the function or delete it. Abstract methods and `.pyi` stubs are ignored.", "snippet": "def export_tasks(tasks, path):\n    \"\"\"Write tasks somewhere eventually.\"\"\"\n    pass"}, {"rule": "SLP014", "name": "commented-out-code", "severity": "note", "message": "commented-out code (2 lines)", "path": "demo/taskflow/utils.py", "line": 45, "column": 5, "end_line": 46, "end_column": 6, "hint": "Delete it. Version control remembers the old line.", "snippet": "    # status = \"archived\"\n    # owner = \"ada\""}, {"rule": "SLP007", "name": "near-duplicate", "severity": "warning", "message": "duplicate of `summarize_tasks` (100% similar)", "path": "demo/taskflow/utils.py", "line": 70, "column": 1, "end_line": 87, "end_column": 43, "hint": "Keep one function and parameterize the difference. Delete the copy.", "snippet": "def summarize_tasks_v2(tasks, limit):\n    rows = []\n    index = 0"}, {"rule": "SLP013", "name": "versioned-name", "severity": "warning", "message": "`summarize_tasks_v2` looks like a leftover versioned name", "path": "demo/taskflow/utils.py", "line": 70, "column": 1, "end_line": 87, "end_column": 43, "hint": "Rename it to the real name and delete the previous copy. Suffixes like `_new` are flagged when the base name still exists.", "snippet": "def summarize_tasks_v2(tasks, limit):\n    rows = []\n    index = 0"}], "parse_errors": [], "by_rule": {"SLP001": 1, "SLP002": 1, "SLP003": 1, "SLP004": 2, "SLP005": 3, "SLP006": 1, "SLP007": 1, "SLP008": 1, "SLP009": 1, "SLP010": 3, "SLP011": 1, "SLP012": 1, "SLP013": 1, "SLP014": 1, "SLP015": 1}, "by_severity": {"error": 6, "note": 5, "warning": 9}, "warnings": []}</script>
+<script>
+const buttons = document.querySelectorAll("button[data-filter]");
+const cards = document.querySelectorAll("#findings article");
+const query = document.getElementById("q");
+let active = "all";
+function apply() {
+  const needle = (query.value || "").toLowerCase();
+  cards.forEach((card) => {
+    const sev = card.dataset.severity;
+    const rule = card.dataset.rule;
+    const text = card.textContent.toLowerCase();
+    const byFilter = active === "all" || active === sev || active === rule;
+    card.hidden = !(byFilter && (!needle || text.includes(needle)));
+  });
+}
+buttons.forEach((button) => {
+  button.addEventListener("click", () => {
+    active = button.dataset.filter;
+    buttons.forEach((item) => item.setAttribute("aria-pressed", item === button ? "true" : "false"));
+    apply();
+  });
+});
+query.addEventListener("input", apply);
+</script>
+</body>
+</html>

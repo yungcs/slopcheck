@@ -225,9 +225,10 @@ def is_abstract_or_overload(fn: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
 
 def unparse(node: ast.AST) -> str:
     try:
-        return ast.unparse(node)
+        rendered = ast.unparse(node)
     except (ValueError, TypeError):
-        return ""
+        rendered = "<expr>"
+    return rendered
 
 
 def catches_import_error(node: ast.AST, parents: dict[int, ast.AST]) -> bool:
