@@ -38,10 +38,10 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yonguyungcs-pixel/slopcheck"
-Repository = "https://github.com/yonguyungcs-pixel/slopcheck"
-Issues = "https://github.com/yonguyungcs-pixel/slopcheck/issues"
-Changelog = "https://github.com/yonguyungcs-pixel/slopcheck/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/yungcs/slopcheck"
+Repository = "https://github.com/yungcs/slopcheck"
+Issues = "https://github.com/yungcs/slopcheck/issues"
+Changelog = "https://github.com/yungcs/slopcheck/blob/main/CHANGELOG.md"
 
 dependencies = [
   "rich>=13.7",

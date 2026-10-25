@@ -28,7 +28,7 @@ SANS = Path("/usr/share/fonts/truetype/macos/Inter-Regular.ttf")
 SANS_MED = Path("/usr/share/fonts/truetype/macos/Inter-Medium.ttf")
 SANS_SEMI = Path("/usr/share/fonts/truetype/macos/Inter-SemiBold.ttf")
 TAGLINE = "A linter for the mess AI agents leave in Python"
-REPO = "github.com/yonguyungcs-pixel/slopcheck"
+REPO = "github.com/yungcs/slopcheck"
 
 INK = "#14160f"
 PAPER = "#f3f0e6"

@@ -1,6 +1,6 @@
 # Contributing
 
-Issues and pull requests go to [yonguyungcs-pixel/slopcheck](https://github.com/yonguyungcs-pixel/slopcheck).
+Issues and pull requests go to [yungcs/slopcheck](https://github.com/yungcs/slopcheck).
 
 ## Setup
 
@@ -40,7 +40,7 @@ Tag `vX.Y.Z` only when `src/slopcheck/version.py` has the same version. [`.githu
 
 On PyPI, add this GitHub repo as a trusted publisher:
 
-- Owner: `yonguyungcs-pixel`
+- Owner: `yungcs`
 - Repository: `slopcheck`
 - Workflow: `release.yml`
 - Environment: `pypi`

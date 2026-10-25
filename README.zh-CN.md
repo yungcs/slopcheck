@@ -9,7 +9,7 @@
 
 <p align="center">
   <a href="https://pypi.org/project/slopcheck/"><img alt="PyPI" src="https://img.shields.io/pypi/v/slopcheck?label=pypi"></a>
-  <a href="https://github.com/yonguyungcs-pixel/slopcheck/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/yonguyungcs-pixel/slopcheck/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/yungcs/slopcheck/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/yungcs/slopcheck/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-blue"></a>
   <img alt="Python 3.10 到 3.13" src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-3776AB">
   <img alt="Slop Score 100" src="docs/slop-score.svg">
@@ -142,7 +142,7 @@ Claude Code 可以在每次编辑后检查。复制 [`examples/hooks/slopcheck.s
 
 ```yaml
 repos:
-  - repo: https://github.com/yonguyungcs-pixel/slopcheck
+  - repo: https://github.com/yungcs/slopcheck
     rev: v0.1.0
     hooks:
       - id: slopcheck
@@ -151,7 +151,7 @@ repos:
 GitHub Action，把 SARIF 上传到 code scanning：
 
 ```yaml
-- uses: yonguyungcs-pixel/slopcheck@v0.1.0
+- uses: yungcs/slopcheck@v0.1.0
   with:
     path: .
     upload-sarif: "true"
@@ -202,11 +202,11 @@ Action 定义在 [`action.yml`](action.yml)。完整工作流在 [`examples/work
 ## Star 历史
 
 <p align="center">
-  <a href="https://star-history.com/#yonguyungcs-pixel/slopcheck&Date">
+  <a href="https://star-history.com/#yungcs/slopcheck&Date">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=yonguyungcs-pixel/slopcheck&type=Date&theme=dark">
-      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=yonguyungcs-pixel/slopcheck&type=Date">
-      <img alt="yonguyungcs-pixel/slopcheck 的 Star 历史" src="https://api.star-history.com/svg?repos=yonguyungcs-pixel/slopcheck&type=Date">
+      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=yungcs/slopcheck&type=Date&theme=dark">
+      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=yungcs/slopcheck&type=Date">
+      <img alt="yungcs/slopcheck 的 Star 历史" src="https://api.star-history.com/svg?repos=yungcs/slopcheck&type=Date">
     </picture>
   </a>
 </p>

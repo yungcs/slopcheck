@@ -54,7 +54,7 @@ def test_launch_visuals_and_metadata():
         elapsed += gif.info.get("duration", 0)
     assert 5 < elapsed / 1000 < 15
     pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
-    assert "https://github.com/yonguyungcs-pixel/slopcheck" in pyproject
+    assert "https://github.com/yungcs/slopcheck" in pyproject
     for name in ("README.md", "README.zh-CN.md"):
         text = (ROOT / name).read_text(encoding="utf-8")
         for asset in (
@@ -67,7 +67,7 @@ def test_launch_visuals_and_metadata():
         ):
             assert asset in text
         assert "prefers-color-scheme: dark" in text
-        assert "yonguyungcs-pixel/slopcheck" in text
+        assert "yungcs/slopcheck" in text
 
 
 def test_skill_links_point_at_one_file():
