@@ -1,0 +1,9 @@
+- id: slopcheck
+  name: slopcheck
+  description: Flag AI-agent slop in Python
+  entry: slopcheck
+  language: python
+  language_version: python3
+  types_or: [python, pyi]
+  pass_filenames: true
+  minimum_pre_commit_version: "3.2.0"

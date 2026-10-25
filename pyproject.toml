@@ -1,0 +1,65 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "slopcheck"
+dynamic = ["version"]
+description = "A linter for the mess AI coding agents leave in Python."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "slopcheck contributors" }]
+keywords = [
+  "linter",
+  "python",
+  "ai",
+  "slop",
+  "static-analysis",
+  "sarif",
+  "cli",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = [
+  "rich>=13.7",
+  "tomli>=2.0.1; python_version < '3.11'",
+  "typer>=0.12",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+slopcheck = "slopcheck.cli:cli"
+
+[tool.hatch.version]
+path = "src/slopcheck/version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/slopcheck"]
+
+[tool.hatch.build.targets.wheel.sources]
+"src" = ""
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.slopcheck]
+exclude = ["demo/**", "tests/fixtures/**"]
+min-score = 100
+
+[tool.slopcheck.rules.SLP010]
+allowed_modules = ["pytest"]

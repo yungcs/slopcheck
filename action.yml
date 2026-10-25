@@ -1,0 +1,73 @@
+name: slopcheck
+description: Lint Python for the mess AI coding agents leave behind
+author: slopcheck contributors
+branding:
+  icon: search
+  color: yellow
+inputs:
+  path:
+    description: Files or directories to scan
+    required: false
+    default: "."
+  min-score:
+    description: Fail when the Slop Score is below this value. Empty keeps the default (warnings and errors fail the run).
+    required: false
+    default: ""
+  format:
+    description: Report format written to the output file
+    required: false
+    default: sarif
+  output:
+    description: Report path
+    required: false
+    default: slopcheck.sarif
+  upload-sarif:
+    description: Upload a SARIF report to GitHub code scanning
+    required: false
+    default: "true"
+  extra-args:
+    description: Extra arguments for slopcheck, split on spaces
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - name: Install slopcheck
+      shell: bash
+      run: python -m pip install "${{ github.action_path }}"
+    - name: Run slopcheck
+      id: slopcheck
+      shell: bash
+      env:
+        SLOP_PATH: ${{ inputs.path }}
+        SLOP_FORMAT: ${{ inputs.format }}
+        SLOP_OUTPUT: ${{ inputs.output }}
+        SLOP_MIN: ${{ inputs.min-score }}
+        SLOP_EXTRA: ${{ inputs.extra-args }}
+      run: |
+        set -euo pipefail
+        # shellcheck disable=SC2206
+        path_args=($SLOP_PATH)
+        cmd=(slopcheck "${path_args[@]}" --format "$SLOP_FORMAT" --output "$SLOP_OUTPUT")
+        if [ -n "$SLOP_MIN" ]; then
+          cmd+=(--min-score "$SLOP_MIN")
+        fi
+        if [ -n "$SLOP_EXTRA" ]; then
+          # shellcheck disable=SC2206
+          extra_args=($SLOP_EXTRA)
+          cmd+=("${extra_args[@]}")
+        fi
+        "${cmd[@]}"
+    - name: Upload SARIF
+      if: always() && inputs.upload-sarif == 'true' && inputs.format == 'sarif'
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ inputs.output }}
+    - name: Propagate slopcheck status
+      if: steps.slopcheck.outcome == 'failure'
+      shell: bash
+      run: exit 1
