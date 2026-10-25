@@ -36,6 +36,40 @@ def test_demo_assets_are_self_contained():
     assert 'type="application/json"' in html
 
 
+def test_launch_visuals_and_metadata():
+    from PIL import Image
+
+    docs = ROOT / "docs"
+    dark = Image.open(docs / "hero-dark.png")
+    light = Image.open(docs / "hero-light.png")
+    assert dark.size == light.size == (1600, 560)
+    assert dark.tobytes() != light.tobytes()
+    assert Image.open(docs / "social-preview.png").size == (1280, 640)
+    assert Image.open(docs / "before-after.png").size[0] >= 1200
+    assert Image.open(docs / "report.png").size[0] >= 1000
+    gif = Image.open(docs / "demo.gif")
+    elapsed = 0
+    for index in range(gif.n_frames):
+        gif.seek(index)
+        elapsed += gif.info.get("duration", 0)
+    assert 5 < elapsed / 1000 < 15
+    pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    assert "https://github.com/yonguyungcs-pixel/slopcheck" in pyproject
+    for name in ("README.md", "README.zh-CN.md"):
+        text = (ROOT / name).read_text(encoding="utf-8")
+        for asset in (
+            "docs/hero-dark.png",
+            "docs/hero-light.png",
+            "docs/demo.gif",
+            "docs/before-after.png",
+            "docs/report.png",
+            "docs/slop-score.svg",
+        ):
+            assert asset in text
+        assert "prefers-color-scheme: dark" in text
+        assert "yonguyungcs-pixel/slopcheck" in text
+
+
 def test_skill_links_point_at_one_file():
     target = (ROOT / "skills" / "slopcheck" / "SKILL.md").resolve()
     text = target.read_text(encoding="utf-8")

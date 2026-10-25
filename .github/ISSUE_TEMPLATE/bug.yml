@@ -1,0 +1,34 @@
+name: Bug
+description: A rule misfired, a score looks wrong, or a command failed
+title: "SLPxxx: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: Include the rule id, the file, and the score if you have one.
+    validations:
+      required: true
+  - type: textarea
+    id: code
+    attributes:
+      label: Smallest Python snippet
+      description: Ten lines that reproduce it. Strip secrets.
+      render: python
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: slopcheck version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      placeholder: "3.12"
+    validations:
+      required: true

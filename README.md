@@ -1,165 +1,56 @@
-# slopcheck
+<p align="center"><strong>English</strong> · <a href="README.zh-CN.md">简体中文</a></p>
 
-A linter for the mess AI coding agents leave in Python.
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/hero-dark.png">
+    <img src="docs/hero-light.png" alt="slopcheck — A linter for the mess AI agents leave in Python" width="820">
+  </picture>
+</p>
 
-[中文说明](README.zh-CN.md)
+<p align="center">
+  <a href="https://pypi.org/project/slopcheck/"><img alt="PyPI" src="https://img.shields.io/pypi/v/slopcheck?label=pypi"></a>
+  <a href="https://github.com/yonguyungcs-pixel/slopcheck/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/yonguyungcs-pixel/slopcheck/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-blue"></a>
+  <img alt="Python 3.10 through 3.13" src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-3776AB">
+  <img alt="Slop Score 100" src="docs/slop-score.svg">
+</p>
 
-[![slop score](docs/slop-score.svg)](docs/slop-score.svg)
-![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-3776AB)
-![MIT](https://img.shields.io/badge/license-MIT-blue)
+<p align="center"><strong>One command. A score from 0 to 100. Higher is cleaner.</strong></p>
 
-One command scans a Python tree, flags agent slop, and prints a **Slop Score** from 0 to 100. Higher is cleaner. The same findings can be handed to Claude Code, Codex, or Cursor as a fix prompt.
+<p align="center">
+  <img src="docs/demo.gif" alt="uvx slopcheck demo scores 29, slopcheck prompt, then a fixed tree scores 94" width="720">
+</p>
+
+Ruff and Pylint will not catch this. Agents still ship it: a bare `except`, `import requets`, a `_v2` twin, a `breakpoint()` left in the fetch path. slopcheck flags that residue and hands the findings to Claude Code, Codex, or Cursor.
+
+## Install in 5 seconds
 
 ```bash
 uvx slopcheck .
 ```
 
-From a checkout of this repo:
+```bash
+pipx install slopcheck
+```
 
 ```bash
-pip install -e ".[dev]"
-slopcheck .
+pip install slopcheck
 ```
 
-`pipx install slopcheck` works the same way once the package is published. Python 3.10 or newer.
+Python 3.10 or newer. From a checkout of this repo: `pip install -e ".[dev]"`.
 
-## Demo
-
-`demo/taskflow` is a small task client written the way an agent writes it on a Friday: a bare `except`, a hallucinated `requets` import, a `_v2` twin of a function that already exists, and a `breakpoint()` left in the fetch path. `demo/taskflow/ok.py` is the control. Scanned on its own, it scores 100.
-
-![slopcheck demo](docs/demo.svg)
-
-```text
-$ slopcheck demo
-slopcheck  0.1.0
-scanned 5 files · 191 lines · 20 findings
-score   29 / 100  ███░░░░░░░  sloppy
-
-demo/taskflow/client.py
-  11:5  SLP001  error    bare except swallows errors, including KeyboardInterrupt and SystemExit
-            except:
-                pass
-  18:5  SLP002  error    broad except swallows the error
-            except Exception:
-                return None
-  26:9  SLP003  error    except handler returns dummy value {}
-                return {}
-  33:9  SLP015  warning  except handler returns an error payload instead of raising
-                return "Error: failed to fetch title"
-  37:5  SLP005  warning  leftover debug print
-            print("DEBUG reached task fetch")
-  38:5  SLP005  warning  leftover debug f-string
-            print(f"{tasks=}")
-  39:5  SLP005  warning  leftover breakpoint or set_trace()
-            breakpoint()
-  46:13  SLP011  warning  try/except nested to depth 3 (limit 2)
-                    try:
-                        return url.strip()
-
-demo/taskflow/imports_hallucinated.py
-  3:8  SLP010  error    import `requets` does not resolve
-        import requets
-  4:1  SLP010  error    import `jason` does not resolve
-        from jason import loads
-  5:25  SLP010  error    `defaultdictx` is not an attribute of `collections`
-        from collections import defaultdictx
-
-demo/taskflow/utils.py
-  7:5  SLP004  note     narrating comment restates the code
-            # increment index
-            index += 1
-  12:1  SLP004  note     narrating comment restates the code
-        # This function returns the count
-        def task_count(tasks):
-  13:1  SLP012  note     docstring is 11 lines on a 1-statement function
-        def task_count(tasks):
-            """Return the number of tasks.
-  28:1  SLP006  warning  private function `_format_legacy_banner` is never used
-        def _format_legacy_banner(text):
-            return "*** " + text + " ***"
-  34:5  SLP008  note     over-defensive check: `name` is a non-None literal here
-            if name is not None:
-                return name.upper()
-  39:1  SLP009  warning  function body is only pass
-        def export_tasks(tasks, path):
-            """Write tasks somewhere eventually."""
-  45:5  SLP014  note     commented-out code (2 lines)
-            # status = "archived"
-            # owner = "ada"
-  70:1  SLP007  warning  duplicate of `summarize_tasks` (100% similar)
-        def summarize_tasks_v2(tasks, limit):
-            rows = []
-  70:1  SLP013  warning  `summarize_tasks_v2` looks like a leftover versioned name
-        def summarize_tasks_v2(tasks, limit):
-            rows = []
-
-SLP001 1  SLP002 1  SLP003 1  SLP004 2  SLP005 3  SLP006 1  SLP007 1  SLP008 1  SLP009 1  SLP010 3  SLP011 1  SLP012 1  SLP013 1  SLP014 1  SLP015 1
-20 findings · score 29 · fail
-```
-
-The same run as a self-contained page: [docs/demo-report.html](docs/demo-report.html). Open it in a browser. Filters are in the file; nothing is loaded from the network.
-
-Regenerate the picture, the transcript, the badge, and the HTML sample with:
+## Quick start
 
 ```bash
-python scripts/render_assets.py
+slopcheck .                         # terminal report and a Slop Score
+slopcheck . --format sarif -o slopcheck.sarif
+slopcheck prompt . > fix.md         # paste into Claude Code, Codex, or Cursor
+slopcheck . --fix-with-agent
 ```
 
-## Rules
+The bundled demo is the messy tree in the GIF. It ends at `20 findings · score 29 · fail`. The plain transcript is [`docs/demo.txt`](docs/demo.txt). `demo/taskflow/ok.py`, scanned alone, scores 100.
 
-| ID | Severity | Name | What it catches |
-| --- | --- | --- | --- |
-| SLP001 | error | bare-except | Bare `except:` swallows KeyboardInterrupt and SystemExit |
-| SLP002 | error | broad-except-swallow | `except Exception` whose body only passes, continues, or returns None/False |
-| SLP003 | error | fake-fallback | `except` returns `{}`, `[]`, `""`, `0`, `"ok"`, `"todo"`, and similar stand-ins |
-| SLP004 | note | narrating-comment | `# increment i`, `# This function returns the count` |
-| SLP005 | warning | debug-leftover | Debug `print`, `f"{var=}"`, `breakpoint()`, `pdb.set_trace()` |
-| SLP006 | warning | unused-private | `_helper` that nothing in the file calls |
-| SLP007 | warning | near-duplicate | A second function with almost the same structure |
-| SLP008 | note | over-defensive | `None` or `isinstance` check that cannot fail |
-| SLP009 | warning | placeholder-stub | Body is only `pass`, `...`, `NotImplementedError`, or a TODO return |
-| SLP010 | error | hallucinated-import | Module or stdlib attribute that does not resolve |
-| SLP011 | warning | try-nesting | `try` nested deeper than 2 inside one function |
-| SLP012 | note | verbose-docstring | A long docstring on a one or two statement function |
-| SLP013 | warning | versioned-name | `*_v2`, `*_fixed`, `*_copy`, and a sibling `*_new` |
-| SLP014 | note | commented-out-code | Comments that are really code |
-| SLP015 | warning | error-string-return | `except` returns `"Error: ..."` or `{"success": false}` |
-
-`slopcheck rules` prints the live list, including the hint each finding carries.
-
-Left alone on purpose:
-
-- A comment that says why (`# Retry once: the upstream closes idle sockets`).
-- `print(f"tasks={tasks}")`. The self-documenting form `f"{tasks=}"` is the one that gets flagged.
-- An import inside `try/except ImportError`.
-- Abstract methods, `Protocol` bodies, and `.pyi` stubs.
-- `return False` from `__exit__` / `__aexit__`.
-- A function named `brand_new` when no `brand` function sits beside it.
-
-Silence one line, or a whole file:
-
-```python
-result = load()  # slopcheck: ignore[SLP003]
-```
-
-```python
-# slopcheck: disable
-# slopcheck: enable=SLP001
-```
-
-`# slopcheck: ignore` with no ids silences every rule on that line. A comment-only line applies to the next non-blank line.
-
-## Score
-
-An error weighs 8, a warning weighs 4, a note weighs 2.
-
-```text
-budget = lines / 5
-raw    = sum of weights
-score  = round(100 * budget / (budget + raw))
-```
-
-No findings is 100, whatever the line count. A 200-line project with five errors (raw 40) scores 50.
+An error weighs 8, a warning 4, a note 2. `budget = lines / 5`, and the score is `round(100 * budget / (budget + raw))`. No findings is 100. A 200-line project with five errors scores 50.
 
 | Score | Label |
 | --- | --- |
@@ -169,19 +60,51 @@ No findings is 100, whatever the line count. A 200-line project with five errors
 | 25–49 | sloppy |
 | 0–24 | hazardous sludge |
 
-Exit status:
+Exit `0` when nothing error-or-warning remains and the score clears `--min-score`. Exit `1` for findings, parse errors, or a score under the minimum. Exit `2` for bad arguments. Notes alone do not fail the process unless `min-score` says they do. `--exit-zero` always exits 0.
 
-| Code | When |
-| --- | --- |
-| 0 | No errors, no warnings, and the score is at least `--min-score` |
-| 1 | An error, a warning, a parse error, or a score under the minimum |
-| 2 | Bad arguments or a broken config file |
+## Why
 
-Notes alone do not fail the process. They do lower the score, so a `min-score` of 100 fails on a note. `--exit-zero` always exits 0 after the report is written.
+Agents write code that looks finished and fails quietly. Ruff is the fast linter (it will flag a bare `except` as E722). Pylint has its own score. Neither one is looking for the residue around that `except`.
 
-## Config
+| Pattern | Ruff / Pylint | slopcheck |
+| --- | --- | --- |
+| `except KeyError: return {}` | no | SLP003 |
+| `import requets` | no | SLP010 |
+| `summarize_tasks_v2` next to `summarize_tasks` | no | SLP007, SLP013 |
+| `# increment index` above `index += 1` | no | SLP004 |
+| `print(f"{tasks=}")` and `breakpoint()` | not by default | SLP005 |
 
-`slopcheck` reads `[tool.slopcheck]` from the nearest `pyproject.toml`. Hyphens and underscores are the same key. Unknown keys are warned about and ignored. `--no-config` skips the file. `--config other.toml` loads that file instead.
+Run both. Ruff formats and finds bugs. slopcheck is the pass after the agent.
+
+<p align="center">
+  <img src="docs/before-after.png" alt="Before and after for a bare except, a hallucinated import, and a _v2 function" width="820">
+</p>
+
+## Rules
+
+| ID | Sev | What a tiny example looks like |
+| --- | --- | --- |
+| SLP001 | error | `except:` then `pass` |
+| SLP002 | error | `except Exception: return None` |
+| SLP003 | error | `except KeyError: return {}` |
+| SLP004 | note | `# increment index` |
+| SLP005 | warning | `print(f"{tasks=}")`, `breakpoint()` |
+| SLP006 | warning | `def _helper(): ...` and nothing calls it |
+| SLP007 | warning | a second function with the same shape |
+| SLP008 | note | `name = "ada"` then `if name is not None` |
+| SLP009 | warning | `def export_tasks(): pass` |
+| SLP010 | error | `import requets` |
+| SLP011 | warning | `try` inside `try` inside `try` |
+| SLP012 | note | an essay docstring on `return len(tasks)` |
+| SLP013 | warning | `def summarize_tasks_v2` |
+| SLP014 | note | `# status = "archived"` |
+| SLP015 | warning | `return "Error: failed to fetch title"` |
+
+`slopcheck rules` prints the hint that ships with each finding.
+
+Left alone on purpose: a comment that says why, `print(f"tasks={tasks}")` (the flagged form is `f"{tasks=}"`), imports inside `except ImportError`, abstract methods, `Protocol`, `.pyi` files, and `return False` from `__exit__`.
+
+Silence a line with `# slopcheck: ignore[SLP003]`. A comment-only line applies to the next line of code. `# slopcheck: disable` covers the rest of the file until `# slopcheck: enable`.
 
 ```toml
 [tool.slopcheck]
@@ -189,80 +112,104 @@ exclude = ["demo/**", "tests/fixtures/**"]
 ignore = ["SLP004"]
 min-score = 90
 
-[tool.slopcheck.severity]
-SLP008 = "warning"
-
-[tool.slopcheck.per-file-ignores]
-"tests/**" = ["SLP009"]
-
-[tool.slopcheck.rules.SLP007]
-min_lines = 12
-min_tokens = 25
-threshold = 0.92
-
 [tool.slopcheck.rules.SLP010]
 allowed_modules = ["pytest"]
-
-[tool.slopcheck.rules.SLP011]
-max_depth = 2
-
-[tool.slopcheck.rules.SLP012]
-min_doc_lines = 8
-max_body_statements = 2
 ```
 
-`--select` replaces the config selection. `--ignore` is added on top of it. This repo excludes `demo/**` and `tests/fixtures/**` and sets `min-score = 100`, so `slopcheck .` fails on any finding. Passing those paths on the command line opts them back in: `slopcheck demo` scans the demo.
+`--select` replaces the config selection. `--ignore` is added on top. This repo sets `min-score = 100` and excludes the demo, so `slopcheck .` fails on any finding. `slopcheck demo` opts that path back in.
 
-## Output
+<p align="center">
+  <img src="docs/report.png" alt="HTML report for the demo, score 29, with filters and the first findings" width="760">
+</p>
 
-| Format | Command |
-| --- | --- |
-| Terminal | `slopcheck .` |
-| JSON | `slopcheck . --format json` |
-| SARIF 2.1.0 | `slopcheck . --format sarif -o slopcheck.sarif` |
-| HTML | `slopcheck . --format html -o report.html` |
-| SVG badge | `slopcheck badge . -o slop-score.svg` |
-| Fix prompt | `slopcheck prompt .` |
+`slopcheck . --format html -o report.html` writes one file. No network requests. The same run as JSON, SARIF 2.1.0, or an SVG badge: `slopcheck badge . -o slop-score.svg`.
 
-`--quiet` prints one line per finding plus the score. `--verbose` adds the hint. `--no-color` and `--no-snippet` are there for logs.
-
-JSON includes the score, the weights, every finding, parse errors, and counts by rule. SARIF uses relative URIs with `uriBaseId` `%SRCROOT%` and lists all 15 rules on the driver. The HTML report is one file: inline CSS, a filter row, and the findings. The badge uses inline fills, so it renders in a GitHub README.
-
-## Hand the findings to an agent
+## Use with Claude Code, Codex, and Cursor
 
 ```bash
-slopcheck prompt demo > fix.md
-slopcheck src/app.py --fix-with-agent
+slopcheck prompt . > fix.md
 ```
 
-The prompt tells the agent to preserve behavior, to raise instead of returning a dummy, and to run slopcheck again. Pasting it into Claude Code, Codex, or Cursor is enough. The skill at [`skills/slopcheck/SKILL.md`](skills/slopcheck/SKILL.md) says the same thing and tells the agent not to silence rules to inflate the score. The same file is linked from `.claude/skills`, `.cursor/skills`, and `.agents/skills`.
+The prompt says: keep behavior, raise instead of returning a dummy, do not silence rules to inflate the score, then run slopcheck again.
 
-```python
-from slopcheck import scan
+The skill is [`skills/slopcheck/SKILL.md`](skills/slopcheck/SKILL.md). The same file is linked from `.claude/skills`, `.cursor/skills`, and `.agents/skills`.
 
-report = scan(["src"])
-print(report.score, report.label)
+Claude Code can lint after each edit. Copy [`examples/hooks/slopcheck.sh`](examples/hooks/slopcheck.sh) and the matcher in [`examples/hooks/claude-code.settings.json`](examples/hooks/claude-code.settings.json).
+
+## CI, pre-commit, GitHub Action
+
+pre-commit, once `v0.1.0` is tagged:
+
+```yaml
+repos:
+  - repo: https://github.com/yonguyungcs-pixel/slopcheck
+    rev: v0.1.0
+    hooks:
+      - id: slopcheck
 ```
 
-## Integrations
+GitHub Action, with SARIF upload for code scanning:
 
-**pre-commit.** [`.pre-commit-hooks.yaml`](.pre-commit-hooks.yaml) runs slopcheck on staged Python files. Wire it up from [`examples/pre-commit-config.yaml`](examples/pre-commit-config.yaml). Replace `OWNER` with the repo that actually hosts the package.
+```yaml
+- uses: yonguyungcs-pixel/slopcheck@v0.1.0
+  with:
+    path: .
+    upload-sarif: "true"
+```
 
-**GitHub Actions.** [`action.yml`](action.yml) installs slopcheck, writes SARIF, and uploads it to code scanning. [`examples/workflows/slopcheck.yml`](examples/workflows/slopcheck.yml) calls that action. [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs the tests and `slopcheck .` on Python 3.10 through 3.13.
-
-**Claude Code hook.** [`examples/hooks/slopcheck.sh`](examples/hooks/slopcheck.sh) lints a `.py` file after Write or Edit. The matcher lives in [`examples/hooks/claude-code.settings.json`](examples/hooks/claude-code.settings.json).
+The action is [`action.yml`](action.yml). A full workflow is [`examples/workflows/slopcheck.yml`](examples/workflows/slopcheck.yml). CI for this repo runs pytest and `slopcheck .` on Python 3.10–3.13.
 
 ## Comparison
 
-Prose linters and UI linters already have an audience. [no-ai-slop](https://github.com/petergyang/no-ai-slop) (about 12.8k stars when this was written) flags AI-shaped writing. [hallmark](https://github.com/Nutlope/hallmark) (about 32.6k) flags AI-shaped interface. [eslint-plugin-slop](https://github.com/antfu/eslint-plugin-slop) does this job for TypeScript. slopcheck is the Python one: AST and tokens, a score, SARIF, and a prompt an agent can execute.
+| | slopcheck | Ruff | Pylint | eslint-plugin-slop |
+| --- | --- | --- | --- | --- |
+| Language | Python | Python | Python | TypeScript |
+| Fake fallback `return {}` | yes | no | no | no |
+| Hallucinated import | yes | no | no | no |
+| Near-duplicate `_v2` | yes | no | no | no |
+| Narrating comments | yes | no | no | no |
+| Score meant for agents | 0–100 | no | 0–10, different job | no |
+| Fix prompt | yes | no | no | no |
+| SARIF | yes | yes | no | via ESLint |
+| Replaces the others | no | no | no | different language |
+
+[eslint-plugin-slop](https://github.com/antfu/eslint-plugin-slop) is the TypeScript cousin. [no-ai-slop](https://github.com/petergyang/no-ai-slop) edits prose. [hallmark](https://github.com/Nutlope/hallmark) lints interface. This one is for Python.
+
+## FAQ
+
+**Does this replace Ruff?** No. Turn Ruff on. Add slopcheck for the residue Ruff is not built to name.
+
+**Will it call my code AI-written?** No. It flags patterns. Humans write `except: pass` too.
+
+**A note failed my build.** Notes weigh 2 points. They fail the process only when the score drops under `--min-score`. This repo uses 100, so a note fails `slopcheck .`.
+
+**How do I keep a false positive?** `# slopcheck: ignore[SLP010]` on the line, or `allowed_modules` for an extra that is not installed here.
+
+**Which Python?** 3.10, 3.11, 3.12, and 3.13.
 
 ## Roadmap
 
-- Safe autofix for narrating comments, commented-out code, and debug leftovers.
-- A baseline file, so a dirty tree can ratchet forward instead of boiling the ocean.
+- Safe edits for narrating comments, commented-out code, and debug leftovers.
+- A baseline file, so a dirty tree can ratchet forward.
 - An LSP, so the score shows up while the agent is still typing.
-- Hallucinated keyword arguments, not only hallucinated imports.
+- Hallucinated keyword arguments.
 - A plugin API for rules that only make sense in one codebase.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). `pytest` and `slopcheck .` should both be clean before you open a PR. The changelog is [CHANGELOG.md](CHANGELOG.md).
+
+## Star history
+
+<p align="center">
+  <a href="https://star-history.com/#yonguyungcs-pixel/slopcheck&Date">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=yonguyungcs-pixel/slopcheck&type=Date&theme=dark">
+      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=yonguyungcs-pixel/slopcheck&type=Date">
+      <img alt="Star history of yonguyungcs-pixel/slopcheck" src="https://api.star-history.com/svg?repos=yonguyungcs-pixel/slopcheck&type=Date">
+    </picture>
+  </a>
+</p>
 
 ## License
 

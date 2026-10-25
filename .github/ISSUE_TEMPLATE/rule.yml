@@ -1,0 +1,29 @@
+name: Rule idea
+description: A pattern agents keep leaving that slopcheck should flag
+title: "Rule: "
+labels: ["rule"]
+body:
+  - type: textarea
+    id: pattern
+    attributes:
+      label: The pattern
+      description: Show the messy version and the version you want to keep.
+      render: python
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why Ruff or Pylint does not already cover it
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Suggested severity
+      options:
+        - error
+        - warning
+        - note
+    validations:
+      required: true

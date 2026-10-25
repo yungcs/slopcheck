@@ -1,0 +1,44 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  pypi:
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/slopcheck
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check tag matches package version
+        run: |
+          python - << 'PY'
+          import os
+          import pathlib
+          import re
+          import sys
+
+          text = pathlib.Path("src/slopcheck/version.py").read_text(encoding="utf-8")
+          match = re.search(r'__version__ = "([^"]+)"', text)
+          version = match.group(1) if match else ""
+          tag = os.environ["GITHUB_REF_NAME"].removeprefix("v")
+          if version != tag:
+              sys.exit(f"tag {tag} does not match package {version}")
+          PY
+      - name: Build
+        run: |
+          python -m pip install build
+          python -m build
+      - name: Publish
+        uses: pypa/gh-action-pypi-publish@release/v1

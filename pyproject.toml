@@ -14,10 +14,14 @@ keywords = [
   "linter",
   "python",
   "ai",
+  "agents",
   "slop",
   "static-analysis",
   "sarif",
   "cli",
+  "claude",
+  "cursor",
+  "codex",
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -32,6 +36,13 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Topic :: Software Development :: Quality Assurance",
 ]
+
+[project.urls]
+Homepage = "https://github.com/yonguyungcs-pixel/slopcheck"
+Repository = "https://github.com/yonguyungcs-pixel/slopcheck"
+Issues = "https://github.com/yonguyungcs-pixel/slopcheck/issues"
+Changelog = "https://github.com/yonguyungcs-pixel/slopcheck/blob/main/CHANGELOG.md"
+
 dependencies = [
   "rich>=13.7",
   "tomli>=2.0.1; python_version < '3.11'",
@@ -39,7 +50,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0"]
+dev = ["pytest>=8.0", "pillow>=10"]
 
 [project.scripts]
 slopcheck = "slopcheck.cli:cli"

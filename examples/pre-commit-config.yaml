@@ -1,5 +1,5 @@
 repos:
-  - repo: https://github.com/OWNER/slopcheck
+  - repo: https://github.com/yonguyungcs-pixel/slopcheck
     rev: v0.1.0
     hooks:
       - id: slopcheck
