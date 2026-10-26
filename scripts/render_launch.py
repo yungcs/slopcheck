@@ -29,6 +29,7 @@ SANS_MED = Path("/usr/share/fonts/truetype/macos/Inter-Medium.ttf")
 SANS_SEMI = Path("/usr/share/fonts/truetype/macos/Inter-SemiBold.ttf")
 TAGLINE = "A linter for the mess AI agents leave in Python"
 REPO = "github.com/yungcs/slopcheck"
+RUN_DEMO = "uvx --from slopcheck-lint slopcheck demo"
 
 INK = "#14160f"
 PAPER = "#f3f0e6"
@@ -119,31 +120,52 @@ def hero(path: Path, *, dark: bool) -> None:
     image.save(path, "PNG", optimize=True)
 
 
+def _wrap_words(draw: ImageDraw.ImageDraw, text: str, face: ImageFont.FreeTypeFont, limit: int) -> list[str]:
+    lines: list[str] = []
+    current = ""
+    for word in text.split():
+        candidate = f"{current} {word}".strip()
+        if current and text_width(draw, candidate, face) > limit:
+            lines.append(current)
+            current = word
+        else:
+            current = candidate
+    if current:
+        lines.append(current)
+    return lines
+
+
 def social(path: Path) -> None:
     image = Image.new("RGB", (1280, 640), NIGHT)
     draw = ImageDraw.Draw(image)
     draw.rectangle((0, 0, 1280, 8), fill=LIME)
     draw_mark(draw, (72, 86), 88, plate=LIME, tick=INK)
     draw.text((184, 86), "slopcheck", font=font(SANS_SEMI, 72), fill="#f4f6ef")
-    draw.text((76, 210), TAGLINE, font=font(SANS, 32), fill=MUTED_DARK)
+    left, right, top, bottom = 560, 1208, 150, 520
+    tagline = font(SANS, 32)
+    for index, line in enumerate(_wrap_words(draw, TAGLINE, tagline, left - 76 - 40)):
+        draw.text((76, 210 + index * 46), line, font=tagline, fill=MUTED_DARK)
     draw.text((76, 560), REPO, font=font(MONO, 22), fill="#6f7864")
-    card = (700, 150, 1188, 520)
-    draw.rounded_rectangle(card, radius=18, fill=TERM, outline="#2a3324", width=2)
-    draw.rounded_rectangle((700, 150, 1188, 198), radius=18, fill=TERM_BAR)
-    draw.rectangle((700, 180, 1188, 198), fill=TERM_BAR)
+    draw.rounded_rectangle((left, top, right, bottom), radius=18, fill=TERM, outline="#2a3324", width=2)
+    draw.rounded_rectangle((left, top, right, top + 48), radius=18, fill=TERM_BAR)
+    draw.rectangle((left, top + 30, right, top + 48), fill=TERM_BAR)
     for index, color in enumerate(("#ff5f57", "#febc2e", "#28c840")):
-        cx = 732 + index * 28
-        draw.ellipse((cx, 166, cx + 14, 180), fill=color)
-    body = font(MONO, 24)
-    bold = font(MONO_BOLD, 28)
+        cx = left + 32 + index * 28
+        draw.ellipse((cx, top + 16, cx + 14, top + 30), fill=color)
+    inset = 32
+    size = 24
+    while size > 16 and font(MONO, size).getlength(f"$ {RUN_DEMO}") > right - left - 2 * inset:
+        size -= 1
+    body = font(MONO, size)
+    bold = font(MONO_BOLD, size + 4)
     rows = [
-        (188, [("$ ", LIME), ("uvx slopcheck demo", "#f4f6ef")]),
-        (236, [("score  ", "#f4f6ef"), ("29", RED), ("  sloppy", EMBER)]),
-        (300, [("$ ", LIME), ("slopcheck demo", "#f4f6ef")]),
-        (348, [("score  ", "#f4f6ef"), ("94", GREEN), ("  clean", LIME)]),
+        (top + 80, [("$ ", LIME), (RUN_DEMO, "#f4f6ef")]),
+        (top + 124, [("score  ", "#f4f6ef"), ("29", RED), ("  sloppy", EMBER)]),
+        (top + 196, [("$ ", LIME), ("slopcheck demo", "#f4f6ef")]),
+        (top + 240, [("score  ", "#f4f6ef"), ("94", GREEN), ("  clean", LIME)]),
     ]
     for y, spans in rows:
-        x = 732
+        x = left + inset
         face = bold if any(part in {"29", "94"} for part, _color in spans) else body
         for part, color in spans:
             draw.text((x, y), part, font=face, fill=color)
@@ -391,7 +413,7 @@ def _dirty_rows(report: object) -> list[Row]:
             picked.append(item)
             seen.add(item.rule_id)
     rows: list[Row] = [
-        [("$ ", LIME), ("uvx slopcheck demo", "#f4f6ef")],
+        [("$ ", LIME), (RUN_DEMO, "#f4f6ef")],
         _plain(f"slopcheck  {report.version}", "#f4f6ef"),
         _plain(_header(report)[1], MUTED_DARK),
         *_score_rows(report),
@@ -435,24 +457,36 @@ def _wrap(row: Row, face: ImageFont.FreeTypeFont, limit: int) -> list[Row]:
             flat.append((char, color))
     if not flat:
         return [row]
-    lines: list[Row] = []
-    current: Row = []
+    pieces: list[list[tuple[str, str]]] = []
+    current: list[tuple[str, str]] = []
     width = 0
     for char, color in flat:
         advance = math.ceil(face.getlength(char))
         if width + advance > limit and current:
-            lines.append(current)
-            current = []
-            width = 0
-            if char == " ":
+            spaces = [index for index, (value, _color) in enumerate(current) if value == " "]
+            cut = spaces[-1] if spaces and any(v != " " for v, _c in current[: spaces[-1]]) else None
+            if cut is not None and char != " ":
+                pieces.append(current[:cut])
+                current = current[cut + 1 :]
+            else:
+                pieces.append(current)
+                current = []
+            width = sum(math.ceil(face.getlength(value)) for value, _color in current)
+            if char == " " and not current:
                 continue
-        if current and current[-1][1] == color:
-            current[-1] = (current[-1][0] + char, color)
-        else:
-            current.append((char, color))
+        current.append((char, color))
         width += advance
     if current:
-        lines.append(current)
+        pieces.append(current)
+    lines: list[Row] = []
+    for piece in pieces:
+        line: Row = []
+        for char, color in piece:
+            if line and line[-1][1] == color:
+                line[-1] = (line[-1][0] + char, color)
+            else:
+                line.append((char, color))
+        lines.append(line)
     return lines or [[]]
 
 
@@ -478,7 +512,7 @@ def _frame(
     title_face = font(SANS_MED, 18)
     draw.text(((width - text_width(draw, title, title_face)) // 2, 16), title, font=title_face, fill=MUTED_DARK)
     y = 78
-    limit = width - 112
+    limit = width - 56
     for row in rows:
         face = bold if any(part.strip() in {"29", "94"} for part, _color in row) else body
         wrapped = _wrap(row, face, limit)
@@ -495,7 +529,9 @@ def _frame(
 
 def _type_rows(command: str) -> list[list[Row]]:
     frames: list[list[Row]] = []
-    for count in range(1, len(command) + 1):
+    step = 2 if len(command) > 24 else 1
+    for count in range(step, len(command) + step, step):
+        count = min(count, len(command))
         frames.append([[("$ ", LIME), (command[:count], "#f4f6ef"), ("█", LIME)]])
     frames.append([[("$ ", LIME), (command, "#f4f6ef")]])
     return frames
@@ -511,12 +547,12 @@ def _reveal(base: list[Row]) -> list[list[Row]]:
 
 
 def gif(path: Path, dirty: object, clean: object) -> None:
-    body = font(MONO, 30)
-    bold = font(MONO_BOLD, 42)
+    body = font(MONO, 26)
+    bold = font(MONO_BOLD, 38)
     width, height = 840, 720
-    body_step, score_step = 44, 58
+    body_step, score_step = 40, 54
     frames: list[Image.Image] = []
-    typed = [_type_rows("uvx slopcheck demo"), _type_rows("slopcheck prompt demo"), _type_rows("slopcheck demo")]
+    typed = [_type_rows(RUN_DEMO), _type_rows("slopcheck prompt demo"), _type_rows("slopcheck demo")]
     reveals = [
         _reveal(_dirty_rows(dirty)),
         _reveal(_prompt_rows(dirty)),

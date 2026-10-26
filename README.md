@@ -18,7 +18,7 @@
 <p align="center"><strong>One command. A score from 0 to 100. Higher is cleaner.</strong></p>
 
 <p align="center">
-  <img src="docs/demo.gif" alt="slopcheck demo scores 29, slopcheck prompt, then a fixed tree scores 94" width="720">
+  <img src="docs/demo.gif" alt="uvx --from slopcheck-lint slopcheck demo scores 29, slopcheck prompt, then a fixed tree scores 94" width="720">
 </p>
 
 Ruff and Pylint will not catch this. Agents still ship it: a bare `except`, `import requets`, a `_v2` twin, a `breakpoint()` left in the fetch path. slopcheck flags that residue and hands the findings to Claude Code, Codex, or Cursor.

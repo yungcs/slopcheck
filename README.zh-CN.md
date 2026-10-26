@@ -18,7 +18,7 @@
 <p align="center"><strong>一条命令。分数 0 到 100。越高越干净。</strong></p>
 
 <p align="center">
-  <img src="docs/demo.gif" alt="slopcheck demo 得到 29 分，接着是修复提示，修完后得到 94 分" width="720">
+  <img src="docs/demo.gif" alt="uvx --from slopcheck-lint slopcheck demo 得到 29 分，接着是修复提示，修完后得到 94 分" width="720">
 </p>
 
 给 AI 编程代理留在 Python 里的污泥做体检。Ruff 和 Pylint 不抓这些：裸 `except`、`import requets`、旁边还留着原函数的 `_v2`、请求路径上忘删的 `breakpoint()`。slopcheck 标出这些残留，并把发现交给 Claude Code、Codex 或 Cursor。
