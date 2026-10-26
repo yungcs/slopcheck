@@ -19,6 +19,8 @@ def test_prepare_argv():
     assert prepare_argv(["--version"]) == ["--version"]
     assert prepare_argv(["rules", "--help"]) == ["rules", "--help"]
     assert prepare_argv(["prompt", "."]) == ["prompt", "."]
+    assert prepare_argv(["demo"]) == ["demo"]
+    assert prepare_argv(["./demo"]) == ["scan", "./demo"]
     assert prepare_argv(["--fix-with-agent", "."]) == ["scan", "--fix-with-agent", "."]
 
 
@@ -107,3 +109,22 @@ def test_plural():
     assert plural(0, "finding") == "0 findings"
     assert plural(1, "finding") == "1 finding"
     assert plural(20, "finding") == "20 findings"
+
+
+def test_demo_subcommand_scans_packaged_samples(tmp_path: Path, monkeypatch):
+    """``slopcheck demo`` works with no local demo/ folder."""
+    monkeypatch.chdir(tmp_path)
+    assert not (tmp_path / "demo").exists()
+    assert prepare_argv(["demo"]) == ["demo"]
+    result = runner.invoke(app, ["demo", "--no-color"])
+    assert result.exit_code == 1, result.output
+    assert "20 findings · score 29 · fail" in result.output
+    assert "demo/taskflow/" in result.output
+
+
+def test_demo_subcommand_json():
+    result = runner.invoke(app, ["demo", "--format", "json"])
+    assert result.exit_code == 1
+    payload = json.loads(result.stdout)
+    assert payload["score"] == 29
+    assert len(payload["findings"]) == 20

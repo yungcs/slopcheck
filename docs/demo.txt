@@ -1,5 +1,5 @@
 $ slopcheck demo
-slopcheck  0.1.0
+slopcheck  0.1.1
 scanned 5 files · 191 lines · 20 findings
 score   29 / 100  ███░░░░░░░  sloppy
 

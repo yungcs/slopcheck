@@ -16,3 +16,15 @@ def test_demo_ok_module_is_clean():
     report = scan([ROOT / "demo" / "taskflow" / "ok.py"])
     assert report.findings == []
     assert report.score == 100
+
+
+def test_packaged_demo_matches_repo_demo():
+    """Wheel samples stay in lockstep with the repo demo/ tree."""
+    repo = ROOT / "demo"
+    packaged = ROOT / "src" / "slopcheck" / "demo_data"
+    repo_files = sorted(path.relative_to(repo).as_posix() for path in repo.rglob("*") if path.is_file())
+    pkg_files = sorted(path.relative_to(packaged).as_posix() for path in packaged.rglob("*") if path.is_file())
+    assert repo_files == pkg_files
+    for rel in repo_files:
+        assert (repo / rel).read_bytes() == (packaged / rel).read_bytes()
+

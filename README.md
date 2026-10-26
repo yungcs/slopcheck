@@ -50,7 +50,7 @@ slopcheck prompt . > fix.md         # paste into Claude Code, Codex, or Cursor
 slopcheck . --fix-with-agent
 ```
 
-The bundled demo is the messy tree in the GIF. It ends at `20 findings · score 29 · fail`. The plain transcript is [`docs/demo.txt`](docs/demo.txt). `demo/taskflow/ok.py`, scanned alone, scores 100.
+The bundled demo is the messy tree in the GIF. Run `slopcheck demo` (or `uvx --from slopcheck-lint slopcheck demo`) from any directory; the samples ship inside the package. It ends at `20 findings · score 29 · fail`. The plain transcript is [`docs/demo.txt`](docs/demo.txt). `demo/taskflow/ok.py`, scanned alone, scores 100.
 
 An error weighs 8, a warning 4, a note 2. `budget = lines / 5`, and the score is `round(100 * budget / (budget + raw))`. No findings is 100. A 200-line project with five errors scores 50.
 
@@ -118,7 +118,7 @@ min-score = 90
 allowed_modules = ["pytest"]
 ```
 
-`--select` replaces the config selection. `--ignore` is added on top. This repo sets `min-score = 100` and excludes the demo, so `slopcheck .` fails on any finding. `slopcheck demo` opts that path back in.
+`--select` replaces the config selection. `--ignore` is added on top. This repo sets `min-score = 100` and excludes the demo, so `slopcheck .` fails on any finding. `slopcheck demo` runs the packaged samples; scan a local tree with `slopcheck ./demo` or `slopcheck scan demo`.
 
 <p align="center">
   <img src="docs/report.png" alt="HTML report for the demo, score 29, with filters and the first findings" width="760">
@@ -140,12 +140,12 @@ Claude Code can lint after each edit. Copy [`examples/hooks/slopcheck.sh`](examp
 
 ## CI, pre-commit, GitHub Action
 
-pre-commit, once `v0.1.0` is tagged:
+pre-commit, once a version tag exists:
 
 ```yaml
 repos:
   - repo: https://github.com/yungcs/slopcheck
-    rev: v0.1.0
+    rev: v0.1.1
     hooks:
       - id: slopcheck
 ```
@@ -153,7 +153,7 @@ repos:
 GitHub Action, with SARIF upload for code scanning:
 
 ```yaml
-- uses: yungcs/slopcheck@v0.1.0
+- uses: yungcs/slopcheck@v0.1.1
   with:
     path: .
     upload-sarif: "true"

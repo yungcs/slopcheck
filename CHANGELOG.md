@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1 — 2026-10-26
+
+- `slopcheck demo` is a real command: it scans packaged sample files, so it works from an empty directory after `pip install slopcheck-lint` or `uvx --from slopcheck-lint slopcheck demo`. Scan a local folder named `demo` with `slopcheck ./demo` or `slopcheck scan demo`.
+
 ## 0.1.0 — 2026-10-26
 
 First release.

@@ -69,7 +69,7 @@ testpaths = ["tests"]
 pythonpath = ["src"]
 
 [tool.slopcheck]
-exclude = ["demo/**", "tests/fixtures/**"]
+exclude = ["demo/**", "src/slopcheck/demo_data/**", "tests/fixtures/**"]
 min-score = 100
 
 [tool.slopcheck.rules.SLP010]

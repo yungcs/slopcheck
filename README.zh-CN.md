@@ -50,7 +50,7 @@ slopcheck prompt . > fix.md         # 贴进 Claude Code、Codex 或 Cursor
 slopcheck . --fix-with-agent
 ```
 
-GIF 里的脏树就是仓库自带的 demo。那一次扫描以 `20 findings · score 29 · fail` 结束。纯文本在 [`docs/demo.txt`](docs/demo.txt)。单独扫描 `demo/taskflow/ok.py` 是 100 分。
+GIF 里的脏树就是自带的 demo。在任意目录运行 `slopcheck demo`（或 `uvx --from slopcheck-lint slopcheck demo`）即可，样例打进了包里。那一次扫描以 `20 findings · score 29 · fail` 结束。纯文本在 [`docs/demo.txt`](docs/demo.txt)。单独扫描 `demo/taskflow/ok.py` 是 100 分。
 
 error 记 8，warning 记 4，note 记 2。`budget = lines / 5`，分数是 `round(100 * budget / (budget + raw))`。没有发现就是 100。200 行代码加上 5 个 error，分数是 50。
 
@@ -118,7 +118,7 @@ min-score = 90
 allowed_modules = ["pytest"]
 ```
 
-`--select` 替换配置里的选择。`--ignore` 追加到忽略列表。本仓库把 `min-score` 设为 100，并排除 demo，所以 `slopcheck .` 遇到任何发现都会失败。`slopcheck demo` 会把该路径重新纳入扫描。
+`--select` 替换配置里的选择。`--ignore` 追加到忽略列表。本仓库把 `min-score` 设为 100，并排除 demo，所以 `slopcheck .` 遇到任何发现都会失败。`slopcheck demo` 扫描包内样例；本地目录请用 `slopcheck ./demo` 或 `slopcheck scan demo`。
 
 <p align="center">
   <img src="docs/report.png" alt="演示项目的 HTML 报告，分数 29，带筛选和前几条发现" width="760">
@@ -140,12 +140,12 @@ Claude Code 可以在每次编辑后检查。复制 [`examples/hooks/slopcheck.s
 
 ## CI、pre-commit、GitHub Action
 
-打上 `v0.1.0` 标签之后的 pre-commit：
+有版本标签之后的 pre-commit：
 
 ```yaml
 repos:
   - repo: https://github.com/yungcs/slopcheck
-    rev: v0.1.0
+    rev: v0.1.1
     hooks:
       - id: slopcheck
 ```
@@ -153,7 +153,7 @@ repos:
 GitHub Action，把 SARIF 上传到 code scanning：
 
 ```yaml
-- uses: yungcs/slopcheck@v0.1.0
+- uses: yungcs/slopcheck@v0.1.1
   with:
     path: .
     upload-sarif: "true"

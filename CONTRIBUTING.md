@@ -10,7 +10,7 @@ pytest
 slopcheck .
 ```
 
-`slopcheck .` has to score 100. The demo and the test fixtures are excluded on purpose. Scan them by passing the path: `slopcheck demo`.
+`slopcheck .` has to score 100. The demo and the test fixtures are excluded on purpose. Run the packaged samples with `slopcheck demo`, or scan the checkout tree with `slopcheck ./demo`.
 
 Python 3.10 through 3.13. CI runs that matrix.
 

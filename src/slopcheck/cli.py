@@ -33,7 +33,7 @@ app = typer.Typer(
     context_settings={"help_option_names": ["-h", "--help"]},
 )
 FORMATS = {"text", "json", "sarif", "html", "badge", "prompt"}
-_COMMANDS = {"scan", "rules", "prompt", "badge"}
+_COMMANDS = {"scan", "rules", "prompt", "badge", "demo"}
 
 
 def prepare_argv(argv: list[str]) -> list[str]:
@@ -91,6 +91,7 @@ def _emit(
     no_color: bool,
     no_snippet: bool,
     verbose: bool,
+    root: Path | None = None,
 ) -> None:
     from dataclasses import replace
 
@@ -98,6 +99,7 @@ def _emit(
     from slopcheck.discover import discover_root
 
     discovered_root, discovered_pyproject = discover_root(targets[0] if targets[0].exists() else Path.cwd())
+    project_root = root if root is not None else discovered_root
     if no_config:
         loaded = Config()
     elif config is not None:
@@ -111,7 +113,7 @@ def _emit(
     if min_score is not None and (min_score < 0 or min_score > 100):
         _fail("min-score must be between 0 and 100")
     try:
-        report = scan_paths(targets, config=loaded, root=discovered_root)
+        report = scan_paths(targets, config=loaded, root=project_root)
     except ConfigError as exc:
         _fail(str(exc))
     except ScanError as exc:
@@ -275,6 +277,44 @@ def rules(
     for rule in RULES:
         table.add_row(rule.id, rule.name, rule.severity, rule.summary)
     Console().print(table)
+
+
+
+@app.command()
+def demo(
+    format: str = typer.Option("text", "--format", "-f", help="text, json, sarif, html, badge, or prompt."),
+    output: Path | None = typer.Option(None, "--output", "-o", help="Write the report to this file."),
+    quiet: bool = typer.Option(False, "--quiet", "-q", help="One line per finding, plus the score."),
+    no_color: bool = typer.Option(False, "--no-color", help="Disable color."),
+    no_snippet: bool = typer.Option(False, "--no-snippet", help="Omit code snippets."),
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Show hints and a longer snippet."),
+    exit_zero: bool = typer.Option(False, "--exit-zero", help="Always exit 0. Useful when you only want the report."),
+) -> None:
+    """Scan the bundled sample tree. Works without a local demo/ folder."""
+    from slopcheck.demo_samples import demo_tree
+
+    if format not in FORMATS:
+        _fail(f"unknown format {format!r}")
+    try:
+        with demo_tree() as (target, project_root):
+            _emit(
+                [target],
+                format=format,
+                output=output,
+                select=None,
+                ignore=None,
+                config=None,
+                no_config=True,
+                min_score=None,
+                exit_zero=exit_zero,
+                quiet=quiet,
+                no_color=no_color,
+                no_snippet=no_snippet,
+                verbose=verbose,
+                root=project_root,
+            )
+    except FileNotFoundError as exc:
+        _fail(str(exc))
 
 
 @app.command()
