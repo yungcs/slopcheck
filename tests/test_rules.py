@@ -197,3 +197,40 @@ def label_from(payload):
     return folded
 '''
     assert "SLP007" not in rule_ids(scan_source(tmp_path, source))
+@pytest.mark.parametrize(
+    "line",
+    [
+        "print(f'{tasks=}')",
+        "print(f'{tasks = }')",
+        "print(f'{tasks=!r}')",
+        "print(f'{len(tasks)=:>4}')",
+        "print(f'count {tasks[0]=}')",
+        "print(f\"{tasks['a']=}\")",
+        "print('prefix ' f'{tasks=}')",
+        "print(rf'{tasks=}')",
+    ],
+)
+def test_self_documenting_fstring_is_flagged(tmp_path, line):
+    source = f"def main(tasks):\n    {line}\n    return tasks\n"
+    assert "SLP005" in rule_ids(scan_source(tmp_path, source))
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        "print(f'tasks={tasks}')",
+        "print(f'tasks = {tasks}')",
+        "print(f'tasks={tasks!r}')",
+        "print(f'a={tasks:>4} b={tasks}')",
+        "print(f'{{tasks=}} {tasks}')",
+        "print(f'eq={tasks == 1}')",
+        "print(f'ne={tasks != 1}')",
+        "print(f'le={tasks <= 1}')",
+        "print(f'k={tasks[\"x=\"]}')",
+        "print('x=' f'{tasks}')",
+        "print(f'''tasks=\n{tasks}''')",
+    ],
+)
+def test_plain_fstring_print_is_kept(tmp_path, line):
+    source = f"def main(tasks):\n    {line}\n    return tasks\n"
+    assert "SLP005" not in rule_ids(scan_source(tmp_path, source))

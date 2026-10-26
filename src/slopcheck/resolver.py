@@ -98,6 +98,10 @@ class ImportResolver:
             return True
         if top in self._installed_top_levels():
             return self._spec_ok(module)
+        # Python 3.10 builds packages_distributions() from top_level.txt only, and
+        # many current wheels (rich, typer) do not ship one. Ask the import system.
+        if self._spec_ok(top):
+            return self._spec_ok(module)
         return False
 
     def missing_stdlib_attr(self, module: str, name: str) -> bool:

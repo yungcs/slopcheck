@@ -35,25 +35,112 @@ _ANY_SUFFIX = re.compile(
 _TODO_RETURNS = {"todo", "not implemented", "fixme", "tbd", "..."}
 
 
-def _is_self_debug(joined: ast.JoinedStr) -> bool:
+_STRING_START = re.compile(r"(?i)([rbuf]{0,2})('\'\'|\"\"\"|'|\")")
+_OPENERS = {"(": ")", "[": "]", "{": "}"}
+
+
+def _maybe_self_debug(joined: ast.JoinedStr) -> bool:
+    """Cheap AST gate: some literal part ending in `=` sits right before a field."""
     values = joined.values
     for index, part in enumerate(values):
         if index == 0 or not isinstance(part, ast.FormattedValue):
             continue
         previous = values[index - 1]
-        if not isinstance(previous, ast.Constant) or not isinstance(previous.value, str):
-            continue
-        if not str(previous.value).endswith("="):
-            continue
-        expr = part.value
-        if getattr(expr, "lineno", None) != getattr(previous, "lineno", None):
-            continue
-        start = getattr(expr, "col_offset", -1)
-        origin = getattr(previous, "col_offset", 0)
-        end = getattr(previous, "end_col_offset", -1)
-        if start >= origin and start < end:
+        if isinstance(previous, ast.Constant) and str(previous.value).rstrip().endswith("="):
             return True
     return False
+
+
+def _skip_quoted(text: str, pos: int) -> int:
+    """Return the index just past a string literal that starts at `pos`."""
+    match = _STRING_START.match(text, pos)
+    if match is None:
+        return pos + 1
+    quote = match.group(2)
+    raw = "r" in match.group(1).lower()
+    pos = match.end()
+    while pos < len(text):
+        if not raw and text[pos] == "\\":
+            pos += 2
+            continue
+        if text.startswith(quote, pos):
+            return pos + len(quote)
+        pos += 1
+    return pos
+
+
+def _field_is_self_debug(text: str, pos: int) -> tuple[bool, int]:
+    """Scan one replacement field whose `{` is at `pos - 1`."""
+    depth: list[str] = []
+    expr_start = pos
+    while pos < len(text):
+        char = text[pos]
+        if char in "'\"":
+            pos = _skip_quoted(text, pos)
+            continue
+        if char in _OPENERS:
+            depth.append(_OPENERS[char])
+        elif depth and char == depth[-1]:
+            depth.pop()
+        elif not depth and (char in ":}" or (char == "!" and not text.startswith("!=", pos))):
+            expr = text[expr_start:pos].rstrip()
+            debug = expr.endswith("=") and not expr.endswith(("==", "!=", "<=", ">="))
+            spec_depth = 0
+            while pos < len(text):
+                if text[pos] == "{":
+                    spec_depth += 1
+                elif text[pos] == "}":
+                    if spec_depth == 0:
+                        return debug, pos + 1
+                    spec_depth -= 1
+                pos += 1
+            return debug, pos
+        pos += 1
+    return False, pos
+
+
+def _fstring_has_self_debug(segment: str) -> bool:
+    """Find `{expr=}` fields in the source of a string literal, any Python version."""
+    pos = 0
+    while pos < len(segment):
+        match = _STRING_START.match(segment, pos)
+        if match is None:
+            pos += 1
+            continue
+        prefix = match.group(1).lower()
+        quote = match.group(2)
+        raw = "r" in prefix
+        is_f = "f" in prefix
+        pos = match.end()
+        while pos < len(segment) and not segment.startswith(quote, pos):
+            char = segment[pos]
+            if char == "\\" and not raw:
+                if is_f and segment.startswith("N{", pos + 1):
+                    close = segment.find("}", pos)
+                    pos = len(segment) if close < 0 else close + 1
+                else:
+                    pos += 2
+                continue
+            if is_f and segment.startswith("{{", pos):
+                pos += 2
+                continue
+            if is_f and char == "{":
+                debug, pos = _field_is_self_debug(segment, pos + 1)
+                if debug:
+                    return True
+                continue
+            pos += 1
+        pos += len(quote)
+    return False
+
+
+def _is_self_debug(joined: ast.JoinedStr, source: str) -> bool:
+    if not _maybe_self_debug(joined):
+        return False
+    segment = ast.get_source_segment(source, joined)
+    if not segment:
+        return False
+    return _fstring_has_self_debug(segment)
 
 
 def _debug_text(node: ast.AST) -> bool:
@@ -103,12 +190,12 @@ def _is_breakpoint(call: ast.Call) -> bool:
     return False
 
 
-def _debug_reason(call: ast.Call) -> str | None:
+def _debug_reason(call: ast.Call, source: str) -> str | None:
     if _is_breakpoint(call):
         return "leftover breakpoint or set_trace()"
     if not _is_print(call):
         return None
-    if any(isinstance(node, ast.JoinedStr) and _is_self_debug(node) for node in ast.walk(call)):
+    if any(isinstance(node, ast.JoinedStr) and _is_self_debug(node, source) for node in ast.walk(call)):
         return "leftover debug f-string"
     for arg in call.args:
         if _is_dump(arg):
@@ -130,7 +217,7 @@ class DebugLeftoverRule(Rule):
         for node in ast.walk(parsed.tree):
             if not isinstance(node, ast.Call):
                 continue
-            reason = _debug_reason(node)
+            reason = _debug_reason(node, parsed.source)
             if reason is None:
                 continue
             findings.append(make_finding(self, ctx, parsed, reason, node=node))
