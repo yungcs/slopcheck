@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <a href="https://pypi.org/project/slopcheck/"><img alt="PyPI" src="https://img.shields.io/pypi/v/slopcheck?label=pypi"></a>
+  <a href="https://pypi.org/project/slopcheck-lint/"><img alt="PyPI" src="https://img.shields.io/pypi/v/slopcheck-lint?label=pypi"></a>
   <a href="https://github.com/yungcs/slopcheck/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/yungcs/slopcheck/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-blue"></a>
   <img alt="Python 3.10 到 3.13" src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-3776AB">
@@ -18,7 +18,7 @@
 <p align="center"><strong>一条命令。分数 0 到 100。越高越干净。</strong></p>
 
 <p align="center">
-  <img src="docs/demo.gif" alt="uvx slopcheck demo 得到 29 分，接着是修复提示，修完后得到 94 分" width="720">
+  <img src="docs/demo.gif" alt="slopcheck demo 得到 29 分，接着是修复提示，修完后得到 94 分" width="720">
 </p>
 
 给 AI 编程代理留在 Python 里的污泥做体检。Ruff 和 Pylint 不抓这些：裸 `except`、`import requets`、旁边还留着原函数的 `_v2`、请求路径上忘删的 `breakpoint()`。slopcheck 标出这些残留，并把发现交给 Claude Code、Codex 或 Cursor。
@@ -26,16 +26,18 @@
 ## 五秒安装
 
 ```bash
-uvx slopcheck .
+uvx --from slopcheck-lint slopcheck .
 ```
 
 ```bash
-pipx install slopcheck
+pipx install slopcheck-lint
 ```
 
 ```bash
-pip install slopcheck
+pip install slopcheck-lint
 ```
+
+PyPI 上的包名是 `slopcheck-lint`，安装后的命令仍是 `slopcheck`，Python 导入名也仍是 `slopcheck`。
 
 需要 Python 3.10 或更新版本。在本仓库里：`pip install -e ".[dev]"`。
 

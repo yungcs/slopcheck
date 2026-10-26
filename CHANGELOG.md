@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The PyPI distribution is now `slopcheck-lint`, because `slopcheck` on PyPI belongs to another project. The CLI command and the import package are still `slopcheck`: `pip install slopcheck-lint`, then run `slopcheck`.
+
 ## 0.1.0 — 2026-10-25
 
 First release.

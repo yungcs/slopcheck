@@ -38,7 +38,7 @@ python scripts/render_launch.py    # hero, GIF, report shot, before/after, socia
 
 Tag `vX.Y.Z` only when `src/slopcheck/version.py` has the same version. [`.github/workflows/release.yml`](.github/workflows/release.yml) publishes to PyPI with trusted publishing.
 
-On PyPI, add this GitHub repo as a trusted publisher:
+The PyPI distribution is `slopcheck-lint` (the CLI command and import name stay `slopcheck`). On PyPI, add this GitHub repo as a trusted publisher for the `slopcheck-lint` project:
 
 - Owner: `yungcs`
 - Repository: `slopcheck`

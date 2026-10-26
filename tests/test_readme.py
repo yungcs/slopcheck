@@ -12,8 +12,9 @@ def test_readmes_name_every_rule():
     transcript = (ROOT / "docs" / "demo.txt").read_text(encoding="utf-8")
     for name in ("README.md", "README.zh-CN.md"):
         text = (ROOT / name).read_text(encoding="utf-8")
-        assert "uvx slopcheck" in text
-        assert "pipx install slopcheck" in text
+        assert "uvx --from slopcheck-lint slopcheck" in text
+        assert "pipx install slopcheck-lint" in text
+        assert "pip install slopcheck-lint" in text
         assert "20 findings · score 29 · fail" in text
         for rule in RULES:
             assert rule.id in text

@@ -3,7 +3,7 @@ requires = ["hatchling>=1.26"]
 build-backend = "hatchling.build"
 
 [project]
-name = "slopcheck"
+name = "slopcheck-lint"
 dynamic = ["version"]
 description = "A linter for the mess AI coding agents leave in Python."
 readme = "README.md"
@@ -37,12 +37,6 @@ classifiers = [
   "Topic :: Software Development :: Quality Assurance",
 ]
 
-[project.urls]
-Homepage = "https://github.com/yungcs/slopcheck"
-Repository = "https://github.com/yungcs/slopcheck"
-Issues = "https://github.com/yungcs/slopcheck/issues"
-Changelog = "https://github.com/yungcs/slopcheck/blob/main/CHANGELOG.md"
-
 dependencies = [
   "rich>=13.7",
   "tomli>=2.0.1; python_version < '3.11'",
@@ -51,6 +45,12 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "pillow>=10"]
+
+[project.urls]
+Homepage = "https://github.com/yungcs/slopcheck"
+Repository = "https://github.com/yungcs/slopcheck"
+Issues = "https://github.com/yungcs/slopcheck/issues"
+Changelog = "https://github.com/yungcs/slopcheck/blob/main/CHANGELOG.md"
 
 [project.scripts]
 slopcheck = "slopcheck.cli:cli"

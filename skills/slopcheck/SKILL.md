@@ -28,8 +28,10 @@ slopcheck path/to/file.py --format json
 If the command is not on `PATH`:
 
 ```bash
-uvx slopcheck .
+uvx --from slopcheck-lint slopcheck .
 ```
+
+The PyPI package is `slopcheck-lint`; the command is `slopcheck`.
 
 From a checkout of this repo:
 

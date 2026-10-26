@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <a href="https://pypi.org/project/slopcheck/"><img alt="PyPI" src="https://img.shields.io/pypi/v/slopcheck?label=pypi"></a>
+  <a href="https://pypi.org/project/slopcheck-lint/"><img alt="PyPI" src="https://img.shields.io/pypi/v/slopcheck-lint?label=pypi"></a>
   <a href="https://github.com/yungcs/slopcheck/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/yungcs/slopcheck/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-blue"></a>
   <img alt="Python 3.10 through 3.13" src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-3776AB">
@@ -18,7 +18,7 @@
 <p align="center"><strong>One command. A score from 0 to 100. Higher is cleaner.</strong></p>
 
 <p align="center">
-  <img src="docs/demo.gif" alt="uvx slopcheck demo scores 29, slopcheck prompt, then a fixed tree scores 94" width="720">
+  <img src="docs/demo.gif" alt="slopcheck demo scores 29, slopcheck prompt, then a fixed tree scores 94" width="720">
 </p>
 
 Ruff and Pylint will not catch this. Agents still ship it: a bare `except`, `import requets`, a `_v2` twin, a `breakpoint()` left in the fetch path. slopcheck flags that residue and hands the findings to Claude Code, Codex, or Cursor.
@@ -26,16 +26,18 @@ Ruff and Pylint will not catch this. Agents still ship it: a bare `except`, `imp
 ## Install in 5 seconds
 
 ```bash
-uvx slopcheck .
+uvx --from slopcheck-lint slopcheck .
 ```
 
 ```bash
-pipx install slopcheck
+pipx install slopcheck-lint
 ```
 
 ```bash
-pip install slopcheck
+pip install slopcheck-lint
 ```
+
+The PyPI package is `slopcheck-lint`; the command it installs is `slopcheck`, and the import name stays `slopcheck`.
 
 Python 3.10 or newer. From a checkout of this repo: `pip install -e ".[dev]"`.
 
