@@ -8,7 +8,7 @@ from collections import Counter
 
 from slopcheck.formatters.jsonfmt import report_dict
 from slopcheck.globs import relative
-from slopcheck.models import Report
+from slopcheck.models import Report, plural
 from slopcheck.score import score_bar
 
 
@@ -161,10 +161,10 @@ footer {{ margin-top: 28px; color: var(--dim); }}
       <div class="bar">{html.escape(score_bar(report.score, 16))} {html.escape(report.label)}</div>
     </div>
     <div class="meta">
-      <div>{report.files_scanned} files</div>
-      <div>{report.lines_scanned} lines</div>
-      <div>{report.finding_count} findings</div>
-      <div>{severity_counts.get("error", 0)} errors · {severity_counts.get("warning", 0)} warnings · {severity_counts.get("note", 0)} notes</div>
+      <div>{plural(report.files_scanned, 'file')}</div>
+      <div>{plural(report.lines_scanned, 'line')}</div>
+      <div>{plural(report.finding_count, 'finding')}</div>
+      <div>{plural(severity_counts.get("error", 0), "error")} · {plural(severity_counts.get("warning", 0), "warning")} · {plural(severity_counts.get("note", 0), "note")}</div>
     </div>
   </header>
   <div class="filters">

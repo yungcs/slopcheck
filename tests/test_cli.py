@@ -89,3 +89,21 @@ def test_syntax_error_fails(tmp_path: Path):
     payload = json.loads(result.stdout)
     assert payload["parse_errors"]
     assert payload["score"] == 100
+
+
+def test_summary_counts_are_pluralized(tmp_path: Path):
+    sample = tmp_path / "one.py"
+    sample.write_text("def main():\n    breakpoint()\n", encoding="utf-8")
+    result = runner.invoke(app, ["scan", str(sample), "--no-config"])
+    assert "scanned 1 file · 2 lines · 1 finding\n" in result.output
+    assert "1 finding · score" in result.output
+    assert "1 findings" not in result.output
+    assert "1 files" not in result.output
+
+
+def test_plural():
+    from slopcheck.models import plural
+
+    assert plural(0, "finding") == "0 findings"
+    assert plural(1, "finding") == "1 finding"
+    assert plural(20, "finding") == "20 findings"

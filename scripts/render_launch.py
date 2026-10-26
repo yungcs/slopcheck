@@ -17,6 +17,7 @@ from slopcheck.config import Config
 from slopcheck.engine import scan
 from slopcheck.formatters.prompt import render_prompt
 from slopcheck.globs import relative
+from slopcheck.models import plural
 from slopcheck.score import score_bar
 from slopcheck.version import __version__
 
@@ -373,8 +374,8 @@ def _header(report: object) -> list[str]:
     return [
         f"slopcheck  {report.version}",
         (
-            f"scanned {report.files_scanned} files · {report.lines_scanned} lines · "
-            f"{report.finding_count} findings"
+            f"scanned {plural(report.files_scanned, 'file')} · {plural(report.lines_scanned, 'line')} · "
+            f"{plural(report.finding_count, 'finding')}"
         ),
         f"score  {report.score:>3} / 100  {score_bar(report.score)}  {report.label}",
     ]
@@ -422,7 +423,7 @@ def _dirty_rows(report: object) -> list[Row]:
     for item in picked:
         rows.append(_plain(_finding_row(item), "#f4f6ef"))
     rows.append(_plain("", "#f4f6ef"))
-    rows.append(_plain(f"{report.finding_count} findings · score {report.score} · {_status(report)}", RED))
+    rows.append(_plain(f"{plural(report.finding_count, 'finding')} · score {report.score} · {_status(report)}", RED))
     return rows
 
 
@@ -446,7 +447,7 @@ def _clean_rows(report: object) -> list[Row]:
         _plain(relative(item.path, report.root), "#f4f6ef"),
         _plain(_finding_row(item), "#d7decc"),
         _plain("", "#f4f6ef"),
-        _plain(f"{report.finding_count} finding · score {report.score} · {_status(report)}", GREEN),
+        _plain(f"{plural(report.finding_count, 'finding')} · score {report.score} · {_status(report)}", GREEN),
     ]
 
 

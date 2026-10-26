@@ -1,14 +1,12 @@
 # Changelog
 
-## Unreleased
-
-- The PyPI distribution is now `slopcheck-lint`, because `slopcheck` on PyPI belongs to another project. The CLI command and the import package are still `slopcheck`: `pip install slopcheck-lint`, then run `slopcheck`.
-
-## 0.1.0 — 2026-10-25
+## 0.1.0 — 2026-10-26
 
 First release.
 
+- Published on PyPI as `slopcheck-lint`, because `slopcheck` on PyPI belongs to another project. The CLI command and the import package are `slopcheck`: `pip install slopcheck-lint`, then run `slopcheck`.
 - Fifteen rules, `SLP001` through `SLP015`, and a Slop Score from 0 to 100.
 - Terminal, JSON, SARIF, HTML, SVG badge, and an agent fix prompt.
 - Config in `[tool.slopcheck]`, inline `# slopcheck: ignore`.
 - pre-commit hook, GitHub Action, and a skill for Claude Code, Codex, and Cursor.
+- Python 3.10 through 3.13.

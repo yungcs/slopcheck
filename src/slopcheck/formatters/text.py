@@ -8,7 +8,7 @@ from rich.console import Console
 from rich.text import Text
 
 from slopcheck.globs import relative
-from slopcheck.models import Report
+from slopcheck.models import Report, plural
 from slopcheck.score import score_bar
 
 _SEVERITY = {"error": "red", "warning": "yellow", "note": "cyan"}
@@ -45,8 +45,8 @@ def render_text(
     title.append(f"  {report.version}", style="dim")
     console.print(title)
     console.print(
-        f"scanned {report.files_scanned} files · {report.lines_scanned} lines · "
-        f"{report.finding_count} findings",
+        f"scanned {plural(report.files_scanned, 'file')} · {plural(report.lines_scanned, 'line')} · "
+        f"{plural(report.finding_count, 'finding')}",
         highlight=False,
     )
     style = _score_style(report.score)
@@ -101,7 +101,7 @@ def render_text(
             )
     status = _status(report, min_score)
     console.print(
-        f"{report.finding_count} findings · score {report.score} · {status}",
+        f"{plural(report.finding_count, 'finding')} · score {report.score} · {status}",
         style="bold red" if status == "fail" else "bold green",
         highlight=False,
     )

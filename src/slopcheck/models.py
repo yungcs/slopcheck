@@ -6,6 +6,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 
+def plural(count: int, noun: str) -> str:
+    """`1 finding`, `2 findings`."""
+    return f"{count} {noun}" if count == 1 else f"{count} {noun}s"
+
+
 @dataclass(frozen=True)
 class Finding:
     """One rule match."""
